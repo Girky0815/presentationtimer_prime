@@ -1,0 +1,64 @@
+name: Build and Release Windows App
+
+on:
+  push:
+    tags:
+      - "v*" # "v1.0.0" などのタグが付いた時だけ動く
+
+permissions:
+  contents: write # リリースを作成する権限
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      # 1. コードを持ってくる
+      - uses: actions/checkout@v4
+
+      # 2. Flutter環境構築
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          
+      # 3. パッケージ取得
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. Windowsアプリのビルド
+      - name: Build Windows App
+        run: flutter build windows --release
+
+      # 5. タグからバージョン番号を取得 (v1.0.0 -> 1.0.0)
+      - name: Get Version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      # 6. 必要なファイルをまとめてZip圧縮 (PowerShell)
+      - name: Compress Release
+        run: |
+          $appName = "presentationtimerPrime"
+          $version = "${{ steps.get_version.outputs.VERSION }}"
+          $source = "build\windows\x64\runner\Release"
+          $dest = "${appName}_v${version}_windowsx64.zip"
+          
+          # 配布用のフォルダ構造を作成
+          New-Item -ItemType Directory -Path $appName
+          Copy-Item -Path "$source\*" -Destination $appName -Recurse
+          
+          # 圧縮
+          Compress-Archive -Path $appName -DestinationPath $dest
+          
+          # 環境変数にファイル名を保存
+          echo "ZIP_NAME=$dest" >> $env:GITHUB_ENV
+
+      # 7. GitHub Releases に下書き(Draft)として作成
+      - name: Create Release Draft
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.ZIP_NAME }}
+          draft: true                   # <--- ここがポイント：下書きで止める
+          generate_release_notes: true  # 便利機能：コミットログを自動で本文に入れておく
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
