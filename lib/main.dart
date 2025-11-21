@@ -98,6 +98,13 @@ class TimerState extends ChangeNotifier {
     BellConfig(id: 2, min: 10, sec: 0, count: 2),
     BellConfig(id: 3, min: 14, sec: 0, count: 3),
   ];
+
+  List<BellConfig> get sortedBells {
+    final sorted = List<BellConfig>.from(bells);
+    sorted.sort((a, b) => a.totalSeconds.compareTo(b.totalSeconds));
+    return sorted;
+  }
+
   bool isDarkMode = false;
 
   // Timer State
@@ -106,6 +113,21 @@ class TimerState extends ChangeNotifier {
   int elapsedSeconds = 0;
   String mode = 'stopwatch'; // 'timer' | 'stopwatch'
   final AudioPlayer _audioPlayer = AudioPlayer();
+
+  TimerState() {
+    _initAudio();
+  }
+
+  Future<void> _initAudio() async {
+    try {
+      await _audioPlayer.setPlayerMode(PlayerMode.lowLatency);
+      await _audioPlayer.setReleaseMode(
+          ReleaseMode.stop); // Ensure player resets after playback
+      await _audioPlayer.setSource(AssetSource('sounds/bell.mp3'));
+    } catch (e) {
+      debugPrint("Audio init error: $e");
+    }
+  }
 
   int get totalDuration => durationMin * 60 + durationSec;
 
@@ -166,12 +188,12 @@ class TimerState extends ChangeNotifier {
   }
 
   // Bells Logic
-  void addBell() {
+  void addBell(int min, int sec, int count) {
     int newId = (bells.isNotEmpty
             ? bells.map((b) => b.id).reduce((a, b) => a > b ? a : b)
             : 0) +
         1;
-    bells.add(BellConfig(id: newId, min: durationMin, sec: 0, count: 1));
+    bells.add(BellConfig(id: newId, min: min, sec: sec, count: count));
     notifyListeners();
   }
 
@@ -195,14 +217,16 @@ class TimerState extends ChangeNotifier {
         // Note: Simple repetition logic.
         // For real assets, make sure 'assets/sounds/bell.mp3' exists.
         for (int i = 0; i < bell.count; i++) {
-          await Future.delayed(Duration(milliseconds: i * 600));
+          if (i > 0) await Future.delayed(const Duration(milliseconds: 600));
           try {
-            // Source must be in pubspec.yaml assets
-            await _audioPlayer.play(AssetSource('sounds/bell.mp3'));
-            // If no asset, print log
+            // Use seek(0) + resume() for fastest replay of preloaded audio
+            await _audioPlayer.seek(Duration.zero);
+            await _audioPlayer.resume();
           } catch (e) {
             debugPrint(
                 "Error playing sound: $e. Make sure assets/sounds/bell.mp3 exists.");
+            // Fallback
+            await _audioPlayer.play(AssetSource('sounds/bell.mp3'));
           }
         }
       }
@@ -304,8 +328,7 @@ class TimerScreen extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              ...state.bells.map((bell) {
-                                // Sort logic is better in state, but doing here for simplicity
+                              ...state.sortedBells.map((bell) {
                                 return _BellChip(bell: bell);
                               }),
                               // Add Button
@@ -313,12 +336,15 @@ class TimerScreen extends StatelessWidget {
                                 padding: const EdgeInsets.all(8.0),
                                 child: InkWell(
                                   onTap: () {
-                                    state.addBell();
-                                    // Open edit immediately for the last added bell
                                     showDialog(
-                                        context: context,
-                                        builder: (c) => BellEditDialog(
-                                            bellId: state.bells.last.id));
+                                      context: context,
+                                      builder: (c) => BellEditDialog(
+                                        initialBell: null, // New bell
+                                        onSave: (min, sec, count) {
+                                          state.addBell(min, sec, count);
+                                        },
+                                      ),
+                                    );
                                   },
                                   borderRadius: BorderRadius.circular(16),
                                   child: Container(
@@ -521,15 +547,26 @@ class _BellChip extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final bellTime = bell.totalSeconds;
     final isPassed = state.elapsedSeconds >= bellTime;
-    final isLastBell = state.bells.last.id == bell.id;
+    // Check if this is the last bell in the SORTED list
+    final isLastBell =
+        state.sortedBells.isNotEmpty && state.sortedBells.last.id == bell.id;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
         onTap: () {
           showDialog(
-              context: context,
-              builder: (c) => BellEditDialog(bellId: bell.id));
+            context: context,
+            builder: (c) => BellEditDialog(
+              initialBell: bell,
+              onSave: (min, sec, count) {
+                state.updateBell(bell.id, min: min, sec: sec, count: count);
+              },
+              onDelete: () {
+                state.removeBell(bell.id);
+              },
+            ),
+          );
         },
         borderRadius: BorderRadius.circular(16),
         child: Container(
@@ -781,17 +818,46 @@ class SettingsPanel extends StatelessWidget {
   }
 }
 
-class BellEditDialog extends StatelessWidget {
-  final int bellId;
+class BellEditDialog extends StatefulWidget {
+  final BellConfig? initialBell;
+  final Function(int min, int sec, int count) onSave;
+  final VoidCallback? onDelete;
 
-  const BellEditDialog({super.key, required this.bellId});
+  const BellEditDialog({
+    super.key,
+    this.initialBell,
+    required this.onSave,
+    this.onDelete,
+  });
+
+  @override
+  State<BellEditDialog> createState() => _BellEditDialogState();
+}
+
+class _BellEditDialogState extends State<BellEditDialog> {
+  late int min;
+  late int sec;
+  late int count;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialBell != null) {
+      min = widget.initialBell!.min;
+      sec = widget.initialBell!.sec;
+      count = widget.initialBell!.count;
+    } else {
+      // Default values for new bell (e.g. 5 min)
+      min = 5;
+      sec = 0;
+      count = 1;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<TimerState>();
-    final bell = state.bells
-        .firstWhere((b) => b.id == bellId, orElse: () => state.bells.first);
     final colorScheme = Theme.of(context).colorScheme;
+    final isEditing = widget.initialBell != null;
 
     return Dialog(
       backgroundColor: colorScheme.surface,
@@ -809,7 +875,7 @@ class BellEditDialog extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("ベル設定",
+                    Text(isEditing ? "ベル設定" : "ベル追加",
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall
@@ -847,22 +913,22 @@ class BellEditDialog extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _TimeInputBox(
-                        value: bell.min,
-                        onChanged: (v) => state.updateBell(bellId, min: v),
+                        value: min,
+                        onChanged: (v) => setState(() => min = v),
                         label: "分",
                         fontSize: 32,
                         padding: 12,
                       ),
                       Padding(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 16),
                         child: Text(":",
                             style: TextStyle(
                                 fontSize: 24, color: colorScheme.onSurface)),
                       ),
                       _TimeInputBox(
-                        value: bell.sec,
-                        onChanged: (v) => state.updateBell(bellId, sec: v),
+                        value: sec,
+                        onChanged: (v) => setState(() => sec = v),
                         label: "秒",
                         fontSize: 32,
                         padding: 12,
@@ -884,26 +950,24 @@ class BellEditDialog extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("鳴動回数",
-                      style: TextStyle(color: colorScheme.onSurface)),
+                  Text("鳴動回数", style: TextStyle(color: colorScheme.onSurface)),
                   Row(
                     children: [
                       IconButton.filledTonal(
-                        onPressed: () => state.updateBell(bellId,
-                            count: (bell.count > 1 ? bell.count - 1 : 1)),
+                        onPressed: () =>
+                            setState(() => count = (count > 1 ? count - 1 : 1)),
                         icon: const Icon(Icons.remove),
                       ),
                       SizedBox(
                           width: 32,
                           child: Center(
-                              child: Text("${bell.count}",
+                              child: Text("$count",
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: colorScheme.onSurface)))),
                       IconButton.filledTonal(
-                        onPressed: () =>
-                            state.updateBell(bellId, count: bell.count + 1),
+                        onPressed: () => setState(() => count = count + 1),
                         icon: const Icon(Icons.add),
                       ),
                     ],
@@ -915,26 +979,31 @@ class BellEditDialog extends StatelessWidget {
             const SizedBox(height: 24),
             Row(
               children: [
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () {
-                      state.removeBell(bellId);
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.delete_outline),
-                    label: const Text("削除"),
-                    style: TextButton.styleFrom(
-                      backgroundColor: colorScheme.errorContainer,
-                      foregroundColor: colorScheme.onErrorContainer,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                if (isEditing) ...[
+                  Expanded(
+                    child: TextButton.icon(
+                      onPressed: () {
+                        if (widget.onDelete != null) widget.onDelete!();
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.delete_outline),
+                      label: const Text("削除"),
+                      style: TextButton.styleFrom(
+                        backgroundColor: colorScheme.errorContainer,
+                        foregroundColor: colorScheme.onErrorContainer,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 16),
+                  const SizedBox(width: 16),
+                ],
                 Expanded(
                   flex: 2,
                   child: FilledButton.icon(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      widget.onSave(min, sec, count);
+                      Navigator.pop(context);
+                    },
                     icon: const Icon(Icons.check),
                     label: const Text("OK"),
                     style: FilledButton.styleFrom(
