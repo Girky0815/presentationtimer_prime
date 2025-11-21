@@ -1,4 +1,4 @@
-# presentationtimer_prime
+# presentationtimer_prime(プレゼンタイマー Prime(仮))
 Material 3 Expressive 風 プレゼンテーション用タイマー
 
 ## 機能
