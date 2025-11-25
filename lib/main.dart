@@ -862,7 +862,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: colorScheme.onSurface)),
-                              Text("プレゼンテーションの持ち時間",
+                              Text("プレゼンの持ち時間を入力",
                                   style: TextStyle(
                                       fontSize: 15,
                                       color: colorScheme.onSurfaceVariant)),
@@ -876,7 +876,22 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                     state.updateDuration(v, state.durationSec),
                                 label: "分",
                               ),
-                              const SizedBox(width: 8),
+                              Column(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 8),
+                                    child: Text(":",
+                                        style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                            color: colorScheme.onSurface)),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text("",
+                                      style: const TextStyle(fontSize: 12)),
+                                ],
+                              ),
                               _TimeInputBox(
                                 value: state.durationSec,
                                 onChanged: (v) =>
@@ -1067,12 +1082,22 @@ class _BellEditDialogState extends State<BellEditDialog> {
                         fontSize: 32,
                         padding: 12,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 16),
-                        child: Text(":",
-                            style: TextStyle(
-                                fontSize: 24, color: colorScheme.onSurface)),
+                      Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Transform.translate(
+                              offset: const Offset(0, -4),
+                              child: Text(":",
+                                  style: TextStyle(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onSurface)),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text("", style: const TextStyle(fontSize: 12)),
+                        ],
                       ),
                       _TimeInputBox(
                         value: sec,
