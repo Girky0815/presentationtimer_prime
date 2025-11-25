@@ -826,6 +826,16 @@ class _SettingsPanelState extends State<SettingsPanel> {
                             Switch(
                               value: state.isDarkMode,
                               onChanged: (v) => state.toggleTheme(),
+                              // ▼ ここから追加: トグルの丸い部分(Thumb)にアイコンを表示する設定
+                              thumbIcon: WidgetStateProperty.resolveWith<Icon?>(
+                                  (Set<WidgetState> states) {
+                                if (states.contains(WidgetState.selected)) {
+                                  // ONのときのアイコン ('O' にしたい場合は Icons.circle_outlined などに変更)
+                                  return const Icon(Icons.check);
+                                }
+                                // OFFのときのアイコン ('X')
+                                return const Icon(Icons.close);
+                              }),
                             ),
                           ],
                         ),
