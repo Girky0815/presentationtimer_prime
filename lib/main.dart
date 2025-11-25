@@ -461,6 +461,7 @@ class TimerScreen extends StatelessWidget {
                           ? (state.displayTime < 0 ? '超過' : '残り')
                           : (state.isOvertime ? '超過' : '経過'),
                       style: TextStyle(
+                        fontSize: 24,
                         color: state.isOvertime
                             ? colorScheme.error
                             : colorScheme.primary,
@@ -743,7 +744,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: colorScheme.surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(36),
                           border: Border.all(
                               color: colorScheme.outlineVariant
                                   .withValues(alpha: 0.2)),
@@ -852,7 +853,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                       color: colorScheme.onSurface)),
                               Text("プレゼンテーションの持ち時間",
                                   style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 15,
                                       color: colorScheme.onSurfaceVariant)),
                             ],
                           ),
@@ -890,7 +891,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                           const SizedBox(width: 8),
                           Flexible(
                             child: Text(
-                              "メイン画面のベルアイコンをタップして設定を変更できます。",
+                              "メイン画面のベルアイコンをタップして\n設定を変更できます。",
                               style: TextStyle(
                                   color: colorScheme.onSurfaceVariant),
                             ),
