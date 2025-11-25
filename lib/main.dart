@@ -250,24 +250,77 @@ class PresentationTimerApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: lightColorScheme,
-        textTheme: GoogleFonts.quicksandTextTheme(
+        textTheme: _buildSmartTextTheme(
           ThemeData(brightness: Brightness.light).textTheme,
-        ).apply(
-          fontFamilyFallback: [GoogleFonts.notoSansJp().fontFamily!],
         ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: darkColorScheme,
-        textTheme: GoogleFonts.quicksandTextTheme(
+        textTheme: _buildSmartTextTheme(
           ThemeData(brightness: Brightness.dark).textTheme,
-        ).apply(
-          fontFamilyFallback: [GoogleFonts.notoSansJp().fontFamily!],
         ),
       ),
       themeMode: timerState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: const TimerScreen(),
     );
+  }
+
+  TextTheme _buildSmartTextTheme(TextTheme base) {
+    return base.copyWith(
+      displayLarge: _getSmartTextStyle(baseStyle: base.displayLarge),
+      displayMedium: _getSmartTextStyle(baseStyle: base.displayMedium),
+      displaySmall: _getSmartTextStyle(baseStyle: base.displaySmall),
+      headlineLarge: _getSmartTextStyle(baseStyle: base.headlineLarge),
+      headlineMedium: _getSmartTextStyle(baseStyle: base.headlineMedium),
+      headlineSmall: _getSmartTextStyle(baseStyle: base.headlineSmall),
+      titleLarge: _getSmartTextStyle(baseStyle: base.titleLarge),
+      titleMedium: _getSmartTextStyle(baseStyle: base.titleMedium),
+      titleSmall: _getSmartTextStyle(baseStyle: base.titleSmall),
+      bodyLarge: _getSmartTextStyle(baseStyle: base.bodyLarge),
+      bodyMedium: _getSmartTextStyle(baseStyle: base.bodyMedium),
+      bodySmall: _getSmartTextStyle(baseStyle: base.bodySmall),
+      labelLarge: _getSmartTextStyle(baseStyle: base.labelLarge),
+      labelMedium: _getSmartTextStyle(baseStyle: base.labelMedium),
+      labelSmall: _getSmartTextStyle(baseStyle: base.labelSmall),
+    );
+  }
+
+  static TextStyle _getSmartTextStyle({
+    TextStyle? baseStyle,
+    double? fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+    List<FontFeature>? fontFeatures,
+    String? fallbackFamily,
+  }) {
+    final defaultFallback = 'Quicksand';
+    final targetFallback = fallbackFamily ?? defaultFallback;
+
+    try {
+      return GoogleFonts.getFont(
+        'Google Sans Flex',
+        textStyle: baseStyle,
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color,
+        fontFeatures: fontFeatures,
+      ).copyWith(
+        fontFamilyFallback: [GoogleFonts.notoSansJp().fontFamily!],
+      );
+    } catch (e) {
+      // Fallback to specified font (Quicksand or Roboto Mono)
+      return GoogleFonts.getFont(
+        targetFallback,
+        textStyle: baseStyle,
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color,
+        fontFeatures: fontFeatures,
+      ).copyWith(
+        fontFamilyFallback: [GoogleFonts.notoSansJp().fontFamily!],
+      );
+    }
   }
 }
 
@@ -351,53 +404,6 @@ class TimerScreen extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Container(
-                                    width: 60,
-                                    height: 80,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: colorScheme.outlineVariant,
-                                        style: BorderStyle.solid,
-                                      ),
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Icon(Icons.add,
-                                        color: colorScheme.primary),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Huge Timer Display
-                    GestureDetector(
-                      onTap: () => state.toggleMode(
-                          state.mode == 'timer' ? 'stopwatch' : 'timer'),
-                      child: Text(
-                        _formatTime(state.displayTime),
-                        style: GoogleFonts.robotoMono(
-                          fontSize:
-                              120, // Responsive sizing requires LayoutBuilder, fixed for now
-                          fontWeight: FontWeight.w400,
-                          color: state.isOvertime
-                              ? colorScheme.error
-                              : colorScheme.onSurface,
-                          height: 1.0,
-                          fontFeatures: [const FontFeature.tabularFigures()],
-                        ),
-                      ),
-                    ),
-
-                    Text(
-                      state.mode == 'timer'
-                          ? (state.displayTime < 0 ? '超過' : '残り')
-                          : (state.isOvertime ? '超過' : '経過'),
                       style: TextStyle(
                         color: state.isOvertime
                             ? colorScheme.error
@@ -531,7 +537,7 @@ class _ModeButton extends StatelessWidget {
                 color: isSelected
                     ? colorScheme.onPrimary
                     : colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
               ),
             ),
           ],
@@ -601,8 +607,8 @@ class _BellChip extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     "ベル ${state.bells.indexOf(bell) + 1}",
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: PresentationTimerApp._getSmartTextStyle(
+                      fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: (isPassed && state.isRunning)
                           ? colorScheme.onTertiary
@@ -615,8 +621,8 @@ class _BellChip extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 _formatTime(bellTime).replaceAll('-', ''),
-                style: GoogleFonts.quicksand(
-                  fontSize: 18,
+                style: PresentationTimerApp._getSmartTextStyle(
+                  fontSize: 22,
                   fontWeight: FontWeight.w500,
                   color: (isPassed && state.isRunning)
                       ? colorScheme.onTertiary
@@ -695,7 +701,9 @@ class _SettingsPanelState extends State<SettingsPanel> {
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall
-                            ?.copyWith(color: colorScheme.onSurface)),
+                            ?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -738,6 +746,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                   Text("ダークモード",
                                       style: TextStyle(
                                           fontSize: 16,
+                                          fontWeight: FontWeight.bold,
                                           color: colorScheme.onSurface)),
                                   Text(state.isDarkMode ? "オン" : "オフ",
                                       style: TextStyle(
@@ -783,6 +792,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                               Text("発表時間",
                                   style: TextStyle(
                                       fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                       color: colorScheme.onSurface)),
                               Text("プレゼンテーションの持ち時間",
                                   style: TextStyle(
@@ -932,7 +942,7 @@ class _BellEditDialogState extends State<BellEditDialog> {
       surfaceTintColor: colorScheme.surfaceTint,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       child: Container(
-        width: 320,
+        width: 380,
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -947,7 +957,9 @@ class _BellEditDialogState extends State<BellEditDialog> {
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall
-                            ?.copyWith(color: colorScheme.onSurface)),
+                            ?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.bold)),
                     Text("タイミングと回数を設定",
                         style: Theme.of(context)
                             .textTheme
@@ -973,7 +985,7 @@ class _BellEditDialogState extends State<BellEditDialog> {
                 children: [
                   Text("鳴動タイミング (経過時間)",
                       style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: colorScheme.primary)),
                   const SizedBox(height: 16),
@@ -1017,28 +1029,48 @@ class _BellEditDialogState extends State<BellEditDialog> {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("鳴動回数", style: TextStyle(color: colorScheme.onSurface)),
-                  Row(
-                    children: [
-                      IconButton.filledTonal(
-                        onPressed: () =>
-                            setState(() => count = (count > 1 ? count - 1 : 1)),
-                        icon: const Icon(Icons.remove),
-                      ),
-                      SizedBox(
-                          width: 32,
-                          child: Center(
-                              child: Text("$count",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: colorScheme.onSurface)))),
-                      IconButton.filledTonal(
-                        onPressed: () => setState(() => count = count + 1),
-                        icon: const Icon(Icons.add),
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("鳴動回数",
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onSurface)),
+                        const SizedBox(height: 4),
+                        Text("ベルを鳴らす回数を設定",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: colorScheme.onSurfaceVariant)),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: [
+                        IconButton.filledTonal(
+                          onPressed: () => setState(
+                              () => count = (count > 1 ? count - 1 : 1)),
+                          icon: const Icon(Icons.remove),
+                        ),
+                        SizedBox(
+                            width: 32,
+                            child: Center(
+                                child: Text("$count",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: colorScheme.onSurface)))),
+                        IconButton.filledTonal(
+                          onPressed: () => setState(() => count = count + 1),
+                          icon: const Icon(Icons.add),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),
@@ -1150,7 +1182,7 @@ class _TimeInputBoxState extends State<_TimeInputBox> {
             controller: _controller,
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(
+            style: PresentationTimerApp._getSmartTextStyle(
               fontSize: widget.fontSize,
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
