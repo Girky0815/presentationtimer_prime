@@ -250,15 +250,19 @@ class PresentationTimerApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: lightColorScheme,
-        textTheme: GoogleFonts.robotoFlexTextTheme(
+        textTheme: GoogleFonts.quicksandTextTheme(
           ThemeData(brightness: Brightness.light).textTheme,
+        ).apply(
+          fontFamilyFallback: [GoogleFonts.notoSansJp().fontFamily!],
         ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: darkColorScheme,
-        textTheme: GoogleFonts.robotoFlexTextTheme(
+        textTheme: GoogleFonts.quicksandTextTheme(
           ThemeData(brightness: Brightness.dark).textTheme,
+        ).apply(
+          fontFamilyFallback: [GoogleFonts.notoSansJp().fontFamily!],
         ),
       ),
       themeMode: timerState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
@@ -377,7 +381,7 @@ class TimerScreen extends StatelessWidget {
                           state.mode == 'timer' ? 'stopwatch' : 'timer'),
                       child: Text(
                         _formatTime(state.displayTime),
-                        style: GoogleFonts.robotoFlex(
+                        style: GoogleFonts.robotoMono(
                           fontSize:
                               120, // Responsive sizing requires LayoutBuilder, fixed for now
                           fontWeight: FontWeight.w400,
@@ -611,7 +615,7 @@ class _BellChip extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 _formatTime(bellTime).replaceAll('-', ''),
-                style: GoogleFonts.robotoFlex(
+                style: GoogleFonts.quicksand(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
                   color: (isPassed && state.isRunning)
@@ -1146,7 +1150,7 @@ class _TimeInputBoxState extends State<_TimeInputBox> {
             controller: _controller,
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
-            style: GoogleFonts.robotoFlex(
+            style: GoogleFonts.quicksand(
               fontSize: widget.fontSize,
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
