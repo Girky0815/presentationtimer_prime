@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -250,15 +250,15 @@ class PresentationTimerApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: lightColorScheme,
-        textTheme: GoogleFonts.quicksandTextTheme().apply(
-          fontFamilyFallback: [GoogleFonts.notoSansJp().fontFamily!],
+        textTheme: GoogleFonts.robotoFlexTextTheme(
+          ThemeData(brightness: Brightness.light).textTheme,
         ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: darkColorScheme,
-        textTheme: GoogleFonts.quicksandTextTheme().apply(
-          fontFamilyFallback: [GoogleFonts.notoSansJp().fontFamily!],
+        textTheme: GoogleFonts.robotoFlexTextTheme(
+          ThemeData(brightness: Brightness.dark).textTheme,
         ),
       ),
       themeMode: timerState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
@@ -377,7 +377,7 @@ class TimerScreen extends StatelessWidget {
                           state.mode == 'timer' ? 'stopwatch' : 'timer'),
                       child: Text(
                         _formatTime(state.displayTime),
-                        style: GoogleFonts.openSans(
+                        style: GoogleFonts.robotoFlex(
                           fontSize:
                               120, // Responsive sizing requires LayoutBuilder, fixed for now
                           fontWeight: FontWeight.w400,
@@ -611,7 +611,7 @@ class _BellChip extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 _formatTime(bellTime).replaceAll('-', ''),
-                style: GoogleFonts.quicksand(
+                style: GoogleFonts.robotoFlex(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
                   color: (isPassed && state.isRunning)
@@ -1146,10 +1146,11 @@ class _TimeInputBoxState extends State<_TimeInputBox> {
             controller: _controller,
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(
-                fontSize: widget.fontSize,
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface),
+            style: GoogleFonts.robotoFlex(
+              fontSize: widget.fontSize,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
             decoration: const InputDecoration(
               isDense: true,
               border: InputBorder.none,
