@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 void main() {
   runApp(
@@ -626,8 +627,28 @@ class _BellChip extends StatelessWidget {
   }
 }
 
-class SettingsPanel extends StatelessWidget {
+class SettingsPanel extends StatefulWidget {
   const SettingsPanel({super.key});
+
+  @override
+  State<SettingsPanel> createState() => _SettingsPanelState();
+}
+
+class _SettingsPanelState extends State<SettingsPanel> {
+  PackageInfo? _packageInfo;
+
+  @override
+  void initState() {
+    super.initState();
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -803,6 +824,49 @@ class SettingsPanel extends StatelessWidget {
                               style: TextStyle(
                                   color: colorScheme.onSurfaceVariant),
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // About Section
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16, bottom: 8),
+                      child: Text("概要",
+                          style: TextStyle(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                            color: colorScheme.outlineVariant
+                                .withValues(alpha: 0.2)),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Icon(Icons.info, color: colorScheme.primary),
+                          const SizedBox(width: 16),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("プレゼンタイマー Prime",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onSurface)),
+                              if (_packageInfo != null)
+                                Text(
+                                    "バージョン ${_packageInfo!.version} (Build ${_packageInfo!.buildNumber})",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: colorScheme.onSurfaceVariant)),
+                            ],
                           ),
                         ],
                       ),
