@@ -331,6 +331,8 @@ class TimerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<TimerState>();
     final colorScheme = Theme.of(context).colorScheme;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final timerFontSize = screenHeight * 0.25;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -404,6 +406,60 @@ class TimerScreen extends StatelessWidget {
                                       ),
                                     );
                                   },
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Container(
+                                    width: 60,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: colorScheme.outlineVariant,
+                                        style: BorderStyle.solid,
+                                      ),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Icon(Icons.add,
+                                        color: colorScheme.primary),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Huge Timer Display
+                    GestureDetector(
+                      onTap: () => state.toggleMode(
+                          state.mode == 'timer' ? 'stopwatch' : 'timer'),
+                      child: Hero(
+                        tag: 'timer_text',
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            _formatTime(state.displayTime),
+                            style: PresentationTimerApp._getSmartTextStyle(
+                              fontSize: timerFontSize,
+                              fontWeight: FontWeight.w400,
+                              color: state.isOvertime
+                                  ? colorScheme.error
+                                  : colorScheme.onSurface,
+                              fontFeatures: [
+                                const FontFeature.tabularFigures()
+                              ],
+                              fallbackFamily: 'Roboto Mono',
+                            ).copyWith(height: 1.0),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    Text(
+                      state.mode == 'timer'
+                          ? (state.displayTime < 0 ? '超過' : '残り')
+                          : (state.isOvertime ? '超過' : '経過'),
                       style: TextStyle(
                         color: state.isOvertime
                             ? colorScheme.error
