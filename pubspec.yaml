@@ -30,3 +30,8 @@ flutter:
   # 音声ファイルを配置する設定
   assets:
     - assets/sounds/
+
+  fonts:
+    - family: Google Sans Flex
+      fonts:
+        - asset: assets/fonts/GoogleSansFlex.ttf

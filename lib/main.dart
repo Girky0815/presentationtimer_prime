@@ -440,7 +440,8 @@ class TimerScreen extends StatelessWidget {
                           fit: BoxFit.scaleDown,
                           child: Text(
                             _formatTime(state.displayTime),
-                            style: PresentationTimerApp._getSmartTextStyle(
+                            style: TextStyle(
+                              fontFamily: 'Google Sans Flex',
                               fontSize: timerFontSize,
                               fontWeight: FontWeight.w400,
                               color: state.isOvertime
@@ -449,8 +450,13 @@ class TimerScreen extends StatelessWidget {
                               fontFeatures: [
                                 const FontFeature.tabularFigures()
                               ],
-                              fallbackFamily: 'Roboto Mono',
-                            ).copyWith(height: 1.0),
+                              fontVariations: const [
+                                FontVariation('ROND', 100),
+                                FontVariation('wdth', 75),
+                                FontVariation('wght', 400),
+                              ],
+                              height: 1.0,
+                            ),
                           ),
                         ),
                       ),
@@ -678,12 +684,17 @@ class _BellChip extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 _formatTime(bellTime).replaceAll('-', ''),
-                style: PresentationTimerApp._getSmartTextStyle(
+                style: TextStyle(
+                  fontFamily: 'Google Sans Flex',
                   fontSize: 22,
                   fontWeight: FontWeight.w500,
                   color: (isPassed && state.isRunning)
                       ? colorScheme.onTertiary
                       : colorScheme.onTertiaryContainer,
+                  fontVariations: const [
+                    FontVariation('wght', 500),
+                    FontVariation('ROND', 100),
+                  ],
                 ),
               ),
             ],
@@ -1119,9 +1130,13 @@ class _BellEditDialogState extends State<BellEditDialog> {
                             child: Center(
                                 child: Text("$count",
                                     style: TextStyle(
+                                        fontFamily: 'Google Sans Flex',
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: colorScheme.onSurface)))),
+                                        color: colorScheme.onSurface,
+                                        fontVariations: const [
+                                          FontVariation('ROND', 100)
+                                        ])))),
                         IconButton.filledTonal(
                           onPressed: () => setState(() => count = count + 1),
                           icon: const Icon(Icons.add),
@@ -1239,10 +1254,12 @@ class _TimeInputBoxState extends State<_TimeInputBox> {
             controller: _controller,
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
-            style: PresentationTimerApp._getSmartTextStyle(
+            style: TextStyle(
+              fontFamily: 'Google Sans Flex',
               fontSize: widget.fontSize,
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
+              fontVariations: const [FontVariation('ROND', 100)],
             ),
             decoration: const InputDecoration(
               isDense: true,
