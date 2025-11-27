@@ -107,7 +107,7 @@ class TimerState extends ChangeNotifier {
     return sorted;
   }
 
-  bool isDarkMode = false;
+  ThemeMode themeMode = ThemeMode.system;
   bool useDynamicColor = false;
 
   // Timer State
@@ -157,8 +157,8 @@ class TimerState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleTheme() {
-    isDarkMode = !isDarkMode;
+  void setThemeMode(ThemeMode mode) {
+    themeMode = mode;
     notifyListeners();
   }
 
@@ -286,7 +286,7 @@ class PresentationTimerApp extends StatelessWidget {
               ThemeData(brightness: Brightness.dark).textTheme,
             ),
           ),
-          themeMode: timerState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          themeMode: timerState.themeMode,
           home: const TimerScreen(),
         );
       },
@@ -763,6 +763,46 @@ class _SettingsPanelState extends State<SettingsPanel> {
     });
   }
 
+  Widget _buildThemeButton(
+    BuildContext context, {
+    required ThemeMode mode,
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        color: isSelected ? colorScheme.primary : Colors.transparent,
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: isSelected
+                  ? colorScheme.onPrimary
+                  : colorScheme.onSurfaceVariant,
+            ),
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = context.watch<TimerState>();
@@ -833,15 +873,88 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       ),
                       child: Column(
                         children: [
-                          SwitchListTile(
-                            title: const Text("ダークモード",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            value: state.isDarkMode,
-                            onChanged: (v) => state.toggleTheme(),
-                            thumbIcon: _thumbIcon,
-                            secondary: Icon(state.isDarkMode
-                                ? Icons.dark_mode
-                                : Icons.light_mode),
+                          // Theme Mode Selection
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      state.themeMode == ThemeMode.system
+                                          ? Icons.brightness_auto
+                                          : state.themeMode == ThemeMode.light
+                                              ? Icons.light_mode
+                                              : Icons.dark_mode,
+                                      size: 20,
+                                      color: colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text("テーマ",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: colorScheme.onSurface)),
+                                  ],
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surfaceContainerHighest,
+                                    borderRadius: BorderRadius.circular(50),
+                                    border: Border.all(
+                                        color: colorScheme.outlineVariant),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        _buildThemeButton(
+                                          context,
+                                          mode: ThemeMode.system,
+                                          icon: Icons.brightness_auto,
+                                          label: "システム",
+                                          isSelected: state.themeMode ==
+                                              ThemeMode.system,
+                                          onTap: () => state
+                                              .setThemeMode(ThemeMode.system),
+                                        ),
+                                        Container(
+                                            width: 1,
+                                            height: 32,
+                                            color: colorScheme.outlineVariant),
+                                        _buildThemeButton(
+                                          context,
+                                          mode: ThemeMode.light,
+                                          icon: Icons.light_mode,
+                                          label: "ライト",
+                                          isSelected: state.themeMode ==
+                                              ThemeMode.light,
+                                          onTap: () => state
+                                              .setThemeMode(ThemeMode.light),
+                                        ),
+                                        Container(
+                                            width: 1,
+                                            height: 32,
+                                            color: colorScheme.outlineVariant),
+                                        _buildThemeButton(
+                                          context,
+                                          mode: ThemeMode.dark,
+                                          icon: Icons.dark_mode,
+                                          label: "ダーク",
+                                          isSelected:
+                                              state.themeMode == ThemeMode.dark,
+                                          onTap: () => state
+                                              .setThemeMode(ThemeMode.dark),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           const Divider(height: 1),
                           SwitchListTile(
@@ -949,7 +1062,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                           const SizedBox(width: 8),
                           Flexible(
                             child: Text(
-                              "メイン画面のベルアイコンをタップして\n設定を変更できます。",
+                              "メイン画面のベルカードを押すと\nベルの設定を変更できます。",
                               style: TextStyle(
                                   color: colorScheme.onSurfaceVariant),
                             ),
