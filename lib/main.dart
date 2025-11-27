@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 
 void main() {
   runApp(
@@ -107,6 +108,7 @@ class TimerState extends ChangeNotifier {
   }
 
   bool isDarkMode = false;
+  bool useDynamicColor = false;
 
   // Timer State
   Timer? _timer;
@@ -157,6 +159,11 @@ class TimerState extends ChangeNotifier {
 
   void toggleTheme() {
     isDarkMode = !isDarkMode;
+    notifyListeners();
+  }
+
+  void toggleDynamicColor(bool value) {
+    useDynamicColor = value;
     notifyListeners();
   }
 
@@ -244,25 +251,42 @@ class PresentationTimerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final timerState = context.watch<TimerState>();
 
-    return MaterialApp(
-      title: 'Presentation Timer',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: lightColorScheme,
-        textTheme: _buildSmartTextTheme(
-          ThemeData(brightness: Brightness.light).textTheme,
-        ),
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: darkColorScheme,
-        textTheme: _buildSmartTextTheme(
-          ThemeData(brightness: Brightness.dark).textTheme,
-        ),
-      ),
-      themeMode: timerState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const TimerScreen(),
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        ColorScheme lightScheme;
+        ColorScheme darkScheme;
+
+        if (timerState.useDynamicColor &&
+            lightDynamic != null &&
+            darkDynamic != null) {
+          lightScheme = lightDynamic.harmonized();
+          darkScheme = darkDynamic.harmonized();
+        } else {
+          lightScheme = lightColorScheme;
+          darkScheme = darkColorScheme;
+        }
+
+        return MaterialApp(
+          title: 'Presentation Timer',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: lightScheme,
+            textTheme: _buildSmartTextTheme(
+              ThemeData(brightness: Brightness.light).textTheme,
+            ),
+          ),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            colorScheme: darkScheme,
+            textTheme: _buildSmartTextTheme(
+              ThemeData(brightness: Brightness.dark).textTheme,
+            ),
+          ),
+          themeMode: timerState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: const TimerScreen(),
+        );
+      },
     );
   }
 
@@ -715,6 +739,14 @@ class SettingsPanel extends StatefulWidget {
 class _SettingsPanelState extends State<SettingsPanel> {
   PackageInfo? _packageInfo;
 
+  final WidgetStateProperty<Icon?> _thumbIcon =
+      WidgetStateProperty.resolveWith<Icon?>((states) {
+    if (states.contains(WidgetState.selected)) {
+      return const Icon(Icons.check);
+    }
+    return const Icon(Icons.close);
+  });
+
   @override
   void initState() {
     super.initState();
@@ -788,57 +820,37 @@ class _SettingsPanelState extends State<SettingsPanel> {
                               color: colorScheme.primary,
                               fontWeight: FontWeight.bold)),
                     ),
-                    InkWell(
-                      onTap: state.toggleTheme,
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                              color: colorScheme.outlineVariant
-                                  .withValues(alpha: 0.2)),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        child: Row(
-                          children: [
-                            Icon(state.isDarkMode
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                            color: colorScheme.outlineVariant
+                                .withValues(alpha: 0.2)),
+                      ),
+                      child: Column(
+                        children: [
+                          SwitchListTile(
+                            title: const Text("ダークモード",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            value: state.isDarkMode,
+                            onChanged: (v) => state.toggleTheme(),
+                            thumbIcon: _thumbIcon,
+                            secondary: Icon(state.isDarkMode
                                 ? Icons.dark_mode
                                 : Icons.light_mode),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("ダークモード",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: colorScheme.onSurface)),
-                                  Text(state.isDarkMode ? "オン" : "オフ",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: colorScheme.onSurfaceVariant)),
-                                ],
-                              ),
-                            ),
-                            Switch(
-                              value: state.isDarkMode,
-                              onChanged: (v) => state.toggleTheme(),
-                              // ▼ ここから追加: トグルの丸い部分(Thumb)にアイコンを表示する設定
-                              thumbIcon: WidgetStateProperty.resolveWith<Icon?>(
-                                  (Set<WidgetState> states) {
-                                if (states.contains(WidgetState.selected)) {
-                                  // ONのときのアイコン ('O' にしたい場合は Icons.circle_outlined などに変更)
-                                  return const Icon(Icons.check);
-                                }
-                                // OFFのときのアイコン ('X')
-                                return const Icon(Icons.close);
-                              }),
-                            ),
-                          ],
-                        ),
+                          ),
+                          const Divider(height: 1),
+                          SwitchListTile(
+                            title: const Text("ダイナミックカラー",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: const Text("壁紙の色に合わせてテーマを変更"),
+                            value: state.useDynamicColor,
+                            onChanged: (v) => state.toggleDynamicColor(v),
+                            thumbIcon: _thumbIcon,
+                            secondary: const Icon(Icons.palette_outlined),
+                          ),
+                        ],
                       ),
                     ),
 
