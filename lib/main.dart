@@ -589,6 +589,7 @@ class _AnimatedModeSwitcherState extends State<_AnimatedModeSwitcher> {
   @override
   void initState() {
     super.initState();
+    // Initial measurement
     WidgetsBinding.instance.addPostFrameCallback((_) => _updateSizes());
   }
 
@@ -598,15 +599,24 @@ class _AnimatedModeSwitcherState extends State<_AnimatedModeSwitcher> {
     final timerBox = _timerKey.currentContext?.findRenderObject() as RenderBox?;
 
     if (stopwatchBox != null && timerBox != null) {
-      setState(() {
-        _stopwatchWidth = stopwatchBox.size.width;
-        _timerWidth = timerBox.size.width;
-      });
+      final newStopwatchWidth = stopwatchBox.size.width;
+      final newTimerWidth = timerBox.size.width;
+
+      if (newStopwatchWidth != _stopwatchWidth ||
+          newTimerWidth != _timerWidth) {
+        setState(() {
+          _stopwatchWidth = newStopwatchWidth;
+          _timerWidth = newTimerWidth;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Schedule size update after every build to handle font weight changes
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateSizes());
+
     final colorScheme = Theme.of(context).colorScheme;
     final isStopwatch = widget.currentMode == 'stopwatch';
 
