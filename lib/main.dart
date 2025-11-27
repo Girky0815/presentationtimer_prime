@@ -632,59 +632,67 @@ class _AnimatedModeSwitcherState extends State<_AnimatedModeSwitcher> {
     final double sliderWidth =
         isStopwatch ? (_stopwatchWidth > 0 ? _stopwatchWidth : 0) : _timerWidth;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Stack(
-        children: [
-          // Sliding Indicator
-          if (_stopwatchWidth > 0 && _timerWidth > 0)
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOutCubicEmphasized,
-              left: sliderLeft,
-              top: 0,
-              bottom: 0,
-              width: sliderWidth,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colorScheme.primary,
-                  borderRadius: BorderRadius.circular(50),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+    return NotificationListener<SizeChangedLayoutNotification>(
+      onNotification: (notification) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _updateSizes());
+        return true;
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Stack(
+          children: [
+            // Sliding Indicator
+            if (_stopwatchWidth > 0 && _timerWidth > 0)
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOutCubicEmphasized,
+                left: sliderLeft,
+                top: 0,
+                bottom: 0,
+                width: sliderWidth,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    borderRadius: BorderRadius.circular(50),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+            // Buttons Row
+            SizeChangedLayoutNotifier(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildButton(
+                    context,
+                    key: _stopwatchKey,
+                    label: labelStopwatch,
+                    icon: iconStopwatch,
+                    isSelected: isStopwatch,
+                    onTap: () => widget.onModeChanged('stopwatch'),
+                  ),
+                  _buildButton(
+                    context,
+                    key: _timerKey,
+                    label: labelTimer,
+                    icon: iconTimer,
+                    isSelected: !isStopwatch,
+                    onTap: () => widget.onModeChanged('timer'),
+                  ),
+                ],
+              ),
             ),
-          // Buttons Row
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildButton(
-                context,
-                key: _stopwatchKey,
-                label: labelStopwatch,
-                icon: iconStopwatch,
-                isSelected: isStopwatch,
-                onTap: () => widget.onModeChanged('stopwatch'),
-              ),
-              _buildButton(
-                context,
-                key: _timerKey,
-                label: labelTimer,
-                icon: iconTimer,
-                isSelected: !isStopwatch,
-                onTap: () => widget.onModeChanged('timer'),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
