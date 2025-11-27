@@ -1332,8 +1332,8 @@ class _BellEditDialogState extends State<BellEditDialog> {
                       icon: const Icon(Icons.delete_outline),
                       label: const Text("削除"),
                       style: TextButton.styleFrom(
-                        backgroundColor: colorScheme.errorContainer,
-                        foregroundColor: colorScheme.onErrorContainer,
+                        backgroundColor: colorScheme.error,
+                        foregroundColor: colorScheme.onError,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
