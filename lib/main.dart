@@ -259,7 +259,10 @@ class PresentationTimerApp extends StatelessWidget {
         if (timerState.useDynamicColor &&
             lightDynamic != null &&
             darkDynamic != null) {
-          lightScheme = lightDynamic.harmonized();
+          lightScheme = lightDynamic.harmonized().copyWith(
+                surface: lightDynamic.surfaceContainer,
+                surfaceContainerLow: lightDynamic.surface,
+              );
           darkScheme = darkDynamic.harmonized();
         } else {
           lightScheme = lightColorScheme;
@@ -844,7 +847,8 @@ class _SettingsPanelState extends State<SettingsPanel> {
                           SwitchListTile(
                             title: const Text("ダイナミックカラー",
                                 style: TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: const Text("壁紙の色に合わせてテーマを変更"),
+                            // subtitle: const Text("壁紙の色に合わせてテーマを変更"),
+                            subtitle: const Text("OSのアクセントカラーを使用"),
                             value: state.useDynamicColor,
                             onChanged: (v) => state.toggleDynamicColor(v),
                             thumbIcon: _thumbIcon,
@@ -876,18 +880,24 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
                             children: [
-                              Text("発表時間",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: colorScheme.onSurface)),
-                              Text("プレゼンの持ち時間を入力",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: colorScheme.onSurfaceVariant)),
+                              const Icon(Icons.timer_outlined),
+                              const SizedBox(width: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("発表時間",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: colorScheme.onSurface)),
+                                  Text("プレゼンの持ち時間",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: colorScheme.onSurfaceVariant)),
+                                ],
+                              ),
                             ],
                           ),
                           Row(
