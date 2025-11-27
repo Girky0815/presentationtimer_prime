@@ -1104,10 +1104,11 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                       color: colorScheme.onSurface)),
                               if (_packageInfo != null)
                                 Text(
-                                    "バージョン ${_packageInfo!.version} (Build ${_packageInfo!.buildNumber})",
+                                    "バージョン ${_packageInfo!.version} (ビルド ${_packageInfo!.buildNumber})",
                                     style: TextStyle(
-                                        fontSize: 12,
-                                        color: colorScheme.onSurfaceVariant)),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: colorScheme.secondary)),
                             ],
                           ),
                         ],
