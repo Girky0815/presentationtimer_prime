@@ -1200,7 +1200,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("プレゼンタイマー Prime",
+                              Text("プレゼンタイマー Prime (仮)",
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
