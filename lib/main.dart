@@ -1070,6 +1070,34 @@ class _SettingsPanelState extends State<SettingsPanel> {
                             thumbIcon: _thumbIcon,
                             secondary: const Icon(Icons.palette_outlined),
                           ),
+                          if (state.useDynamicColor) ...[
+                            const SizedBox(height: 8),
+                            Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerLow,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.info_outline,
+                                      size: 18, color: colorScheme.primary),
+                                  const SizedBox(width: 12),
+                                  Flexible(
+                                    child: Text(
+                                      "OSのアクセントカラーを変更した場合、\n反映するにはアプリの再起動が必要です。",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: colorScheme.onSurfaceVariant),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
                         ],
                       ),
                     ),
