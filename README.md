@@ -7,6 +7,7 @@ Material 3 Expressive 風 プレゼンテーション用タイマー
 - [このiOSアプリ](https://apps.apple.com/jp/app/%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%82%BF%E3%82%A4%E3%83%9E%E3%83%BC/id291171573)をパクリスペクトしたもの
   - 現状 Windows で動作
 - ライトテーマ/ダークテーマ 両対応
+  - v1.1.2+: 既定ではOSの設定に従うように．
 - Material 3 Expressive 風のデザインを使用し，見やすく使いやすいUIを目指した．
 - (Windows x64)インストール不要．
 
@@ -24,17 +25,26 @@ Material 3 Expressive 風 プレゼンテーション用タイマー
 ## できること/できないこと
 ### できること
 - プレゼンテーション用の計時
-- ダークテーマ対応により，ダークテーマが好きな人でも使える
+- ダークテーマ対応により，ダークテーマが好きな人でも使える(OSでダークテーマを使用している場合は起動時からダークテーマが適用される)
 
-### できないこと(今後やりたいこと)
+### できないこと
+- PowerPoint / LibreOffice Impress 等プレゼンテーションソフトとの連携機能
+  - スライドごとの発表時間を掲示するなど．
+
+### 今後やりたいこと
 - アプリ設定の永続化/カスタム可能へ
   - カラースキームのカスタムもできれば実装したい
 - Flutter の Material 3 Expressive 対応が拡張された場合，より Material 3 Expressive 風デザインにする(UI リワーク)
+- ラップ機能(擬似的なスライドごとの所要時間計時)
 
 ## ライセンス
 - 現在，コードのライセンス未指定．MIT Licenseにする予定
 - 使用しているフォントは現状で Google Fonts にあるものを使用しており，いずれもOFL(SIL Open Font License)ライセンスで提供されている
-- 現在，ブザーはポケットサウンド様の音源を使用している．
+  - 日本語フォント: [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP?query=noto+sans+jp)
+  - 英語フォント(日本語が混じる箇所): [QuickSand](https://fonts.google.com/specimen/Quicksand)
+  - 英語フォント(時刻など，日本語が混じらない箇所): [Google Sans Flex](https://fonts.google.com/specimen/Google+Sans+Flex)
+    - 現時点でGoogle Sans FlexにFlutterが対応していないため，リポジトリに本フォントを埋め込んでいる
+- 現在，ベルの音はポケットサウンド様の音源を使用している．
   - https://pocket-se.info
 - Flutter はBSDライセンスのもと提供されている．
 
@@ -50,6 +60,7 @@ v1.0.5時点
 ## 開発関連
 - CI/CDを導入．
   - タグを設定すると自動でビルドし，リリースを下書き状態にするように．
+  - プライベートリポジトリにする場合，プライベートリポジトリではGitHub Actionsが有料となるため，`/.github/workflows/release.yml`を削除する必要がある．
 
 ---
 #### 以下デフォルトのREADME
