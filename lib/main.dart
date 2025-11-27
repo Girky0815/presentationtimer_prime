@@ -1070,34 +1070,47 @@ class _SettingsPanelState extends State<SettingsPanel> {
                             thumbIcon: _thumbIcon,
                             secondary: const Icon(Icons.palette_outlined),
                           ),
-                          if (state.useDynamicColor) ...[
-                            const SizedBox(height: 8),
-                            Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: colorScheme.surfaceContainerLow,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.info_outline,
-                                      size: 18, color: colorScheme.primary),
-                                  const SizedBox(width: 12),
-                                  Flexible(
-                                    child: Text(
-                                      "OSのアクセントカラーを変更した場合、\n反映するにはアプリの再起動が必要です。",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: colorScheme.onSurfaceVariant),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
+                          AnimatedSize(
+                            duration: const Duration(milliseconds: 450),
+                            curve: Curves.easeInOut,
+                            alignment: Alignment.topCenter,
+                            child: state.useDynamicColor
+                                ? Column(
+                                    children: [
+                                      const SizedBox(height: 4),
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color:
+                                              colorScheme.surfaceContainerLow,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.info_outline,
+                                                size: 18,
+                                                color: colorScheme.primary),
+                                            const SizedBox(width: 12),
+                                            Flexible(
+                                              child: Text(
+                                                "OSのアクセントカラーを変更した場合、\n反映するにはアプリの再起動が必要です。",
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: colorScheme.primary),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                    ],
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
                         ],
                       ),
                     ),
@@ -1120,7 +1133,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                             color: colorScheme.outlineVariant
                                 .withValues(alpha: 0.2)),
                       ),
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(12),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
