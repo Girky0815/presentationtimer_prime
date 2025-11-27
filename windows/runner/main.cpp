@@ -25,9 +25,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
   FlutterWindow window(project);
+  // ウィンドウの表示位置とサイズ
   Win32Window::Point origin(10, 10);
-  Win32Window::Size size(1280, 720);
+  Win32Window::Size size(1280, 800);
 
+  // ウィンドウのタイトル
+  // Flutterのバージョンを取得して表示する(+以降のビルド番号は除く)
   std::string version_str = std::to_string(FLUTTER_VERSION_MAJOR) + "." +
                             std::to_string(FLUTTER_VERSION_MINOR) + "." +
                             std::to_string(FLUTTER_VERSION_PATCH);
