@@ -8,14 +8,20 @@ Material 3 Expressive 風 プレゼンテーション用タイマー
   - 現状 Windows x64, Android arm64 で動作
 - ライトテーマ/ダークテーマ 両対応
   - v1.1.2+: 既定ではOSの設定に従うように．
-- Material 3 Expressive 風のデザインを使用し，見やすく使いやすいUIを目指した．
+- **Material 3 Expressive** 風のデザインを使用し，見やすく使いやすいUIを目指した．
+  - まだ試験段階ではあるものの，**ダイナミックカラー**(システムのアクセントカラーに従いアプリのカラーパレットを決める設定)に対応している．
 - (Windows x64)インストール不要．
+- 広告無し，課金なし(完全無料)
+  - 作者は広告や課金制が嫌いなため，ここは徹底している．
 
 ## 推奨環境
 - Windows 11 24H2/25H2
-- Android 14/15/16
+- Android 15/16
   - アプリ自体はAndroid 12L以上で起動できるように設計されている
-その他環境は未検証
+
+その他環境は未検証(おそらくDebianはビルドすれば使える可能性はある)
+
+MacOS/iOS/iPadOS: 対応予定なし(作者は該当OSのデバイスを持っておらず，検証不可能)
 
 ## インストール方法
 ### Windows x64の場合
@@ -23,22 +29,22 @@ Material 3 Expressive 風 プレゼンテーション用タイマー
 - .exeを実行する
 ### Android arm64の場合
 - (おすすめ)Obtainium を使用してインストールする
-  - ↓ここからどうぞ
+  - ↓ここからどうぞ(日本語漢字が中国語フォントで表示されるため文字が見づらいが)
   - <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/girky0815/presentationtimer_prime"><img src="https://github.com/ImranR98/Obtainium/blob/main/assets/graphics/badge_obtainium.png" alt="Obtainiumからインストール" height="50"></a>
 - リリースページのarm用.apkファイルをダウンロードし，インストールする
   - この際，「提供元不明のアプリをインストールする」権限を許可する必要がある
 
-
-
 ## 免責事項
-- Google Antigravity(Gemini 3 Pro)を使用して作成した
-  - コードの品質は保証せず，バグが含まれている可能性がある．
-- 本ソフトウェアは試験的に提供されている．
-- 本ソフトウェア使用により利用者に発生した損害について，作者はいかなる責任も負わない(自己責任)．
+- Google Antigravity(Gemini 3 Pro)を使用して作成した．
+  - 作者はコードの品質は保証しない．
+  - 本ソフトウェアはGoogle Antigravityの実験および作者のアプリ開発における自己満足のために作成している．
+- 本ソフトウェア使用により利用者に発生した損害について，作者はいかなる責任も負わない(要するに自己責任)．
 - 本ソフトウェアの使用によるいかなる損失も補償しない．
 
 ### Android 版の制限
 - アプリの設定データが編集できない．
+- Flutter が Material 3 Expressive に完全対応していないため，ダイナミックカラーをONにすると背景色とカードが一体化して見づらくなることがある．
+  - Android 版では無効化推奨(Windows 版では問題がないのでお好みで)．
 
 ## できること/できないこと
 ### できること
@@ -81,7 +87,7 @@ v1.0.5時点
   - プライベートリポジトリにする場合，プライベートリポジトリではGitHub Actionsが有料となるため，`/.github/workflows/release.yml`を削除する必要がある．
 
 ---
-#### 以下デフォルトのREADME
+#### 以下FlutterデフォルトのREADME
 # presentationtimer_prime
 
 A new Flutter project.
