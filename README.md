@@ -5,7 +5,7 @@ Material 3 Expressive 風 プレゼンテーション用タイマー
 - プレゼンテーション(発表/LT/発表練習)用のストップウォッチとタイマー機能
 - 自由に定義可能なベル設定(ベルの鳴る時間，鳴る回数)
 - [このiOSアプリ](https://apps.apple.com/jp/app/%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%82%BF%E3%82%A4%E3%83%9E%E3%83%BC/id291171573)をパクリスペクトしたもの
-  - 現状 Windows で動作
+  - 現状 Windows x64, Android arm64 で動作
 - ライトテーマ/ダークテーマ 両対応
   - v1.1.2+: 既定ではOSの設定に従うように．
 - Material 3 Expressive 風のデザインを使用し，見やすく使いやすいUIを目指した．
@@ -13,7 +13,22 @@ Material 3 Expressive 風 プレゼンテーション用タイマー
 
 ## 推奨環境
 - Windows 11 24H2/25H2
+- Android 14/15/16
+  - アプリ自体はAndroid 12L以上で起動できるように設計されている
 その他環境は未検証
+
+## インストール方法
+### Windows x64の場合
+- リリースページのx64のZIPファイルを解凍して，任意の場所に配置する
+- .exeを実行する
+### Android arm64の場合
+- (おすすめ)Obtainium を使用してインストールする
+  - https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/girky0815/presentationtimer_prime
+  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/girky0815/presentationtimer_prime"><img src="https://github.com/ImranR98/Obtainium/blob/main/assets/graphics/badge_obtainium.png" alt="Obtainiumからインストール" height="50"></a>
+- リリースページのarm用.apkファイルをダウンロードし，インストールする
+  - この際，「提供元不明のアプリをインストールする」権限を許可する必要がある
+
+
 
 ## 免責事項
 - Google Antigravity(Gemini 3 Pro)を使用して作成した
@@ -21,6 +36,9 @@ Material 3 Expressive 風 プレゼンテーション用タイマー
 - 本ソフトウェアは試験的に提供されている．
 - 本ソフトウェア使用により利用者に発生した損害について，作者はいかなる責任も負わない(自己責任)．
 - 本ソフトウェアの使用によるいかなる損失も補償しない．
+
+### Android 版の制限
+- アプリの設定データが編集できない．
 
 ## できること/できないこと
 ### できること
