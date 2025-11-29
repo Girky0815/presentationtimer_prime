@@ -1,4 +1,4 @@
-package com.example.presentationtimer_prime
+package com.girky.presentationtimer_prime
 
 import io.flutter.embedding.android.FlutterActivity
 
