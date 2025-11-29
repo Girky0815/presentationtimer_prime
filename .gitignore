@@ -46,3 +46,8 @@ app.*.map.json
 
 # build_release.ps1 の生成物を除く
 *.zip
+
+# Android signing
+android/key.properties
+**/*.jks
+*.keystore

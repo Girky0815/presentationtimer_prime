@@ -1,4 +1,4 @@
-name: Build and Release
+name: ビルドとリリース
 
 on:
   push:
@@ -14,40 +14,54 @@ jobs:
 
     steps:
       # 1. コードを持ってくる
-      - uses: actions/checkout@v4
+      - name: リポジトリのチェックアウト
+        uses: actions/checkout@v4
 
       # 2. Javaセットアップ (Androidビルド用)
-      - name: Set up JDK 21
+      - name: JDK 21 のセットアップ
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
       # 3. Flutter環境構築
-      - uses: subosito/flutter-action@v2
+      - name: Flutter のセットアップ
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           
       # 4. パッケージ取得
-      - name: Install dependencies
+      - name: 依存関係のインストール
         run: flutter pub get
 
+      # 4.5. Android署名ファイルの準備
+      - name: キーストアのデコード
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" > android/app/upload-keystore.jks.base64
+          certutil -decode android/app/upload-keystore.jks.base64 android/app/upload-keystore.jks
+        shell: cmd
+
+      - name: key.properties の作成
+        run: |
+          echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" > android/key.properties
+        shell: bash
+
       # 5. Windowsアプリのビルド
-      - name: Build Windows App
+      - name: Windowsアプリ(x64)のビルド
         run: flutter build windows --release
 
       # 6. Android APKのビルド (arm64)
-      - name: Build Android APK
+      - name: Android APK(arm64)のビルド
         run: flutter build apk --release --target-platform android-arm64
 
       # 7. タグからバージョン番号を取得 (v1.0.0 -> 1.0.0)
-      - name: Get Version from tag
+      - name: バージョン番号の取得
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
         shell: bash
 
       # 8. ファイルの準備 (Zip圧縮 & リネーム)
-      - name: Prepare Release Files
+      - name: リリースファイルの準備
         run: |
           $appName = "presentationtimerPrime"
           $version = "${{ steps.get_version.outputs.VERSION }}"
@@ -75,7 +89,7 @@ jobs:
           echo "ANDROID_APK=$apkDest" >> $env:GITHUB_ENV
 
       # 9. GitHub Releases に下書き(Draft)として作成
-      - name: Create Release Draft
+      - name: リリースドラフトの作成
         uses: softprops/action-gh-release@v1
         with:
           files: |
