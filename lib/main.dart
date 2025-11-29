@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -143,10 +143,9 @@ class TimerState extends ChangeNotifier {
   int elapsedSeconds = 0;
   String mode = 'stopwatch'; // 'timer' | 'stopwatch'
 
-  // Audio Pool for low latency playback
-  final List<AudioPlayer> _audioPool = [];
-  static const int _poolSize = 5;
-  int _poolIndex = 0;
+  // SoLoud engine
+  final SoLoud _soloud = SoLoud.instance;
+  AudioSource? _bellSource;
 
   final PreferencesService _prefs = PreferencesService();
 
@@ -177,14 +176,13 @@ class TimerState extends ChangeNotifier {
   }
 
   Future<void> _initAudio() async {
-    // Initialize Audio Pool
-    for (int i = 0; i < _poolSize; i++) {
-      final player = AudioPlayer();
-      // Preload the source
-      await player.setSource(AssetSource('sounds/bell.mp3'));
-      await player
-          .setReleaseMode(ReleaseMode.stop); // Reset to start after play
-      _audioPool.add(player);
+    try {
+      // Initialize SoLoud engine
+      await _soloud.init();
+      // Load bell sound into memory
+      _bellSource = await _soloud.loadAsset('assets/sounds/bell.mp3');
+    } catch (e) {
+      debugPrint("Audio init error: $e");
     }
   }
 
@@ -299,23 +297,18 @@ class TimerState extends ChangeNotifier {
 
   void _playBellFromPool() {
     try {
-      // Use Audio Pool for low latency
-      if (_audioPool.isNotEmpty) {
-        final player = _audioPool[_poolIndex];
-        // Resume is faster than play because source is already loaded
-        player.resume();
-
-        // Move to next player in pool (round-robin)
-        _poolIndex = (_poolIndex + 1) % _poolSize;
-      } else {
-        // Fallback if pool is empty (should not happen)
-        final player = AudioPlayer();
-        player.play(AssetSource('sounds/bell.mp3'));
-        player.onPlayerComplete.listen((_) => player.dispose());
+      if (_bellSource != null) {
+        _soloud.play(_bellSource!);
       }
     } catch (e) {
       debugPrint("Error playing sound: $e");
     }
+  }
+
+  @override
+  void dispose() {
+    _soloud.deinit();
+    super.dispose();
   }
 }
 
