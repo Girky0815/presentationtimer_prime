@@ -1,4 +1,4 @@
-name: Build and Release Windows App
+name: Build and Release
 
 on:
   push:
@@ -16,49 +16,72 @@ jobs:
       # 1. コードを持ってくる
       - uses: actions/checkout@v4
 
-      # 2. Flutter環境構築
+      # 2. Javaセットアップ (Androidビルド用)
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # 3. Flutter環境構築
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           
-      # 3. パッケージ取得
+      # 4. パッケージ取得
       - name: Install dependencies
         run: flutter pub get
 
-      # 4. Windowsアプリのビルド
+      # 5. Windowsアプリのビルド
       - name: Build Windows App
         run: flutter build windows --release
 
-      # 5. タグからバージョン番号を取得 (v1.0.0 -> 1.0.0)
+      # 6. Android APKのビルド (arm64)
+      - name: Build Android APK
+        run: flutter build apk --release --target-platform android-arm64
+
+      # 7. タグからバージョン番号を取得 (v1.0.0 -> 1.0.0)
       - name: Get Version from tag
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
         shell: bash
 
-      # 6. 必要なファイルをまとめてZip圧縮 (PowerShell)
-      - name: Compress Release
+      # 8. ファイルの準備 (Zip圧縮 & リネーム)
+      - name: Prepare Release Files
         run: |
           $appName = "presentationtimerPrime"
           $version = "${{ steps.get_version.outputs.VERSION }}"
-          $source = "build\windows\x64\runner\Release"
-          $dest = "${appName}_v${version}_windowsx64.zip"
+          
+          # --- Windows Zip ---
+          $winSource = "build\windows\x64\runner\Release"
+          $winDest = "${appName}_v${version}_windows-x64.zip"
           
           # 配布用のフォルダ構造を作成
-          New-Item -ItemType Directory -Path $appName
-          Copy-Item -Path "$source\*" -Destination $appName -Recurse
+          New-Item -ItemType Directory -Path $appName -Force
+          Copy-Item -Path "$winSource\*" -Destination $appName -Recurse -Force
           
           # 圧縮
-          Compress-Archive -Path $appName -DestinationPath $dest
+          Compress-Archive -Path $appName -DestinationPath $winDest -Force
           
-          # 環境変数にファイル名を保存
-          echo "ZIP_NAME=$dest" >> $env:GITHUB_ENV
+          # --- Android APK ---
+          $apkSource = "build\app\outputs\flutter-apk\app-release.apk"
+          $apkDest = "${appName}_v${version}_android-arm64.apk"
+          
+          # コピー & リネーム
+          Copy-Item -Path $apkSource -Destination $apkDest -Force
+          
+          # 環境変数にファイルパスを保存 (改行区切りで渡すため、ここでは個別に定義)
+          echo "WIN_ZIP=$winDest" >> $env:GITHUB_ENV
+          echo "ANDROID_APK=$apkDest" >> $env:GITHUB_ENV
 
-      # 7. GitHub Releases に下書き(Draft)として作成
+      # 9. GitHub Releases に下書き(Draft)として作成
       - name: Create Release Draft
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ env.ZIP_NAME }}
-          draft: true                   # <--- ここがポイント：下書きで止める
-          generate_release_notes: true  # 便利機能：コミットログを自動で本文に入れておく
+          files: |
+            ${{ env.WIN_ZIP }}
+            ${{ env.ANDROID_APK }}
+          draft: true                   # <--- 下書きで止める
+          generate_release_notes: true  # コミットログを自動で本文に入れる
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
