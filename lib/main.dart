@@ -20,61 +20,70 @@ void main() {
 // --- Custom Color Schemes (User Defined) ---
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
-  primary: Color(0xFF03513e),
-  onPrimary: Color(0xFFf3fff8),
-  primaryContainer: Color(0xFFaef0d7),
-  onPrimaryContainer: Color(0xFF002117),
-  secondary: Color(0xFF344c43),
-  onSecondary: Color(0xFFf3fff8),
-  secondaryContainer: Color(0xFFcee9dc),
-  onSecondaryContainer: Color(0xFF082018),
-  tertiary: Color(0xFF0e4e58),
-  onTertiary: Color(0xFFf7fdff),
-  tertiaryContainer: Color(0xFFb4ecf8),
-  onTertiaryContainer: Color(0xFF001f25),
-  error: Color(0xFFba1a1a),
-  onError: Color(0xFFffffff),
-  errorContainer: Color(0xFFffdad6),
-  onErrorContainer: Color(0xFF410002),
-  surface: Color(0xFFe8f3ed),
-  onSurface: Color(0xFF181d1a),
-  surfaceContainerHighest: Color(0xFFbec9c3),
-  outline: Color(0xFF56615c),
-  outlineVariant: Color(0xFFbec9c3),
+  primary: Color(0xFF286A56),
+  onPrimary: Color(0xFFE4FFF2),
+  primaryContainer: Color(0xFFAEF0D7),
+  onPrimaryContainer: Color(0xFF175C49),
+  secondary: Color(0xFF4C645A),
+  onSecondary: Color(0xFFE4FFF2),
+  secondaryContainer: Color(0xFFCEE9DC),
+  onSecondaryContainer: Color(0xFF3F574D),
+  tertiary: Color(0xFF2E6771),
+  onTertiary: Color(0xFFEDFBFF),
+  tertiaryContainer: Color(0xFFB7EFFB),
+  onTertiaryContainer: Color(0xFF215B65),
+  error: Color(0xFFA83836),
+  onError: Color(0xFFFFF7F6),
+  errorContainer: Color(0xFFFA746F),
+  onErrorContainer: Color(0xFF6E0A12),
+  surface: Color(0xFFF6FAF6),
+  onSurface: Color(0xFF2B3530),
+  surfaceContainerHighest: Color(0xFFDAE5DF),
+  outline: Color(0xFF737D78),
+  outlineVariant: Color(0xFFAAB4AE),
   // Default fallbacks for others
-  surfaceContainerLow: Color(0xFFf4fff8),
-  surfaceContainer: Color(0xFFe8f3ed),
-  inverseSurface: Color(0xFF29332e),
-  onInverseSurface: Color(0xFFeff1ef),
-  inversePrimary: Color(0xFF53dbc9),
+  surfaceContainerLow: Color(0xFFEFF5F0),
+  surfaceContainer: Color(0xFFE8F0EA),
+  inverseSurface: Color(0xFF0B0F0D),
+  onInverseSurface: Color(0xFF999E9B),
+  inversePrimary: Color(0xFFB9FCE2),
+  // Explicit background mapping
+  background: Color(0xFFF6FAF6),
+  onBackground: Color(0xFF2B3530),
 );
 
 const darkColorScheme = ColorScheme(
   brightness: Brightness.dark,
-  primary: Color(0xFF53dbc9),
-  onPrimary: Color(0xFF003731),
-  primaryContainer: Color(0xFF005048),
-  onPrimaryContainer: Color(0xFF74f8e5),
-  secondary: Color(0xFFb1ccb6), // Adjusted slightly for visibility
-  onSecondary: Color(0xFF1c3531),
-  secondaryContainer: Color(0xFF334b47),
-  onSecondaryContainer: Color(0xFFcce8e2),
-  tertiary: Color(0xFFadcae6),
-  onTertiary: Color(0xFF153349),
-  tertiaryContainer: Color(0xFF2d4961),
-  onTertiaryContainer: Color(0xFFcce5ff),
-  error: Color(0xFFffb4ab),
-  onError: Color(0xFF690005),
-  errorContainer: Color(0xFF93000a),
-  onErrorContainer: Color(0xFFffdad6),
-  surface: Color(0xFF101413),
-  onSurface: Color(0xFFe0e3e1),
-  surfaceContainerHighest: Color(0xFF323534),
-  outline: Color(0xFF899390),
-  outlineVariant: Color(0xFF3f4947),
-  // Fallbacks
-  surfaceContainerLow: Color(0xFF191c1b),
-  surfaceContainer: Color(0xFF1d201f),
+  primary: Color(0xFF9FD1BD),
+  onPrimary: Color(0xFF174839),
+  primaryContainer: Color(0xFF2C5B4B),
+  onPrimaryContainer: Color(0xFFBCEED9),
+  secondary: Color(0xFFB2CCC0),
+  onSecondary: Color(0xFF2E453C),
+  secondaryContainer: Color(0xFF294037),
+  onSecondaryContainer: Color(0xFFABC5B9),
+  tertiary: Color(0xFFDDF9FF),
+  onTertiary: Color(0xFF2B636E),
+  tertiaryContainer: Color(0xFFB7EFFB),
+  onTertiaryContainer: Color(0xFF205B65),
+  error: Color(0xFFFA746F),
+  onError: Color(0xFF490006),
+  errorContainer: Color(0xFF871F21),
+  onErrorContainer: Color(0xFFFF9993),
+  surface: Color(0xFF0B0F0D),
+  onSurface: Color(0xFFDDE8E1),
+  surfaceContainerHighest: Color(0xFF1E2824),
+  outline: Color(0xFF6D7872),
+  outlineVariant: Color(0xFF404A45),
+  // Default fallbacks for others
+  surfaceContainerLow: Color(0xFF0E1512),
+  surfaceContainer: Color(0xFF141B18),
+  inverseSurface: Color(0xFFF6FAF6),
+  onInverseSurface: Color(0xFF515653),
+  inversePrimary: Color(0xFF396858),
+  // Explicit background mapping
+  background: Color(0xFF0B0F0D),
+  onBackground: Color(0xFFDDE8E1),
 );
 
 // --- Models ---
@@ -259,10 +268,7 @@ class PresentationTimerApp extends StatelessWidget {
         if (timerState.useDynamicColor &&
             lightDynamic != null &&
             darkDynamic != null) {
-          lightScheme = lightDynamic.harmonized().copyWith(
-                surface: lightDynamic.surfaceContainer,
-                surfaceContainerLow: lightDynamic.surface,
-              );
+          lightScheme = lightDynamic.harmonized();
           darkScheme = darkDynamic.harmonized();
         } else {
           lightScheme = lightColorScheme;
@@ -275,6 +281,9 @@ class PresentationTimerApp extends StatelessWidget {
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightScheme,
+            scaffoldBackgroundColor: lightScheme.surfaceContainer,
+            cardTheme: CardThemeData(color: lightScheme.surface),
+            dialogTheme: DialogThemeData(backgroundColor: lightScheme.surface),
             textTheme: _buildSmartTextTheme(
               ThemeData(brightness: Brightness.light).textTheme,
             ),
@@ -282,6 +291,9 @@ class PresentationTimerApp extends StatelessWidget {
           darkTheme: ThemeData(
             useMaterial3: true,
             colorScheme: darkScheme,
+            scaffoldBackgroundColor: darkScheme.surfaceContainer,
+            cardTheme: CardThemeData(color: darkScheme.surface),
+            dialogTheme: DialogThemeData(backgroundColor: darkScheme.surface),
             textTheme: _buildSmartTextTheme(
               ThemeData(brightness: Brightness.dark).textTheme,
             ),
@@ -362,7 +374,7 @@ class TimerScreen extends StatelessWidget {
     final timerFontSize = screenHeight * 0.25;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colorScheme.surfaceContainer,
       body: Stack(
         children: [
           Column(
@@ -919,7 +931,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
         child: Container(
           width: 400,
           height: double.infinity,
-          color: colorScheme.surface,
+          color: colorScheme.surfaceContainer,
           child: Column(
             children: [
               // Header
@@ -932,14 +944,14 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       borderRadius: BorderRadius.circular(12),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerLow,
+                          color: colorScheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(36),
                           border: Border.all(
                               color: colorScheme.outlineVariant
                                   .withValues(alpha: 0.2)),
                         ),
                         padding: const EdgeInsets.all(12),
-                        child: const Icon(Icons.chevron_left),
+                        child: const Icon(Icons.arrow_back),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -968,7 +980,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerLow,
+                        color: colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                             color: colorScheme.outlineVariant
@@ -1083,8 +1095,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                             horizontal: 16),
                                         padding: const EdgeInsets.all(4),
                                         decoration: BoxDecoration(
-                                          color:
-                                              colorScheme.surfaceContainerLow,
+                                          color: colorScheme.surface,
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
@@ -1127,7 +1138,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerLow,
+                        color: colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                             color: colorScheme.outlineVariant
@@ -1197,7 +1208,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerLow,
+                        color: colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -1227,7 +1238,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerLow,
+                        color: colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                             color: colorScheme.outlineVariant
@@ -1560,7 +1571,7 @@ class _TimeInputBoxState extends State<_TimeInputBox> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: colorScheme.surface,
+            color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(12),
           ),
           width: widget.fontSize * 2.5,
