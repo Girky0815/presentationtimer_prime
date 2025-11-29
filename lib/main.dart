@@ -142,12 +142,11 @@ class TimerState extends ChangeNotifier {
   bool isRunning = false;
   int elapsedSeconds = 0;
   String mode = 'stopwatch'; // 'timer' | 'stopwatch'
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  // Removed single _audioPlayer instance to use one-shot players
 
   final PreferencesService _prefs = PreferencesService();
 
   TimerState() {
-    _initAudio();
     _loadSettings();
   }
 
@@ -172,16 +171,7 @@ class TimerState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _initAudio() async {
-    try {
-      await _audioPlayer.setPlayerMode(PlayerMode.lowLatency);
-      await _audioPlayer.setReleaseMode(
-          ReleaseMode.stop); // Ensure player resets after playback
-      await _audioPlayer.setSource(AssetSource('sounds/bell.mp3'));
-    } catch (e) {
-      debugPrint("Audio init error: $e");
-    }
-  }
+  // _initAudio removed as we create players on demand
 
   int get totalDuration => durationMin * 60 + durationSec;
 
@@ -279,19 +269,21 @@ class TimerState extends ChangeNotifier {
     for (var bell in bells) {
       if (bell.totalSeconds == elapsedSeconds) {
         // Play sound 'bell.count' times
-        // Note: Simple repetition logic.
-        // For real assets, make sure 'assets/sounds/bell.mp3' exists.
         for (int i = 0; i < bell.count; i++) {
-          if (i > 0) await Future.delayed(const Duration(milliseconds: 600));
+          // Delay between bells (skip for the first one)
+          if (i > 0) await Future.delayed(const Duration(milliseconds: 800));
+
           try {
-            // Use seek(0) + resume() for fastest replay of preloaded audio
-            await _audioPlayer.seek(Duration.zero);
-            await _audioPlayer.resume();
+            // One-shot player strategy: Create a new instance for every sound
+            // This avoids state conflicts and ensures every 'play' command is fresh
+            final player = AudioPlayer();
+            await player.play(AssetSource('sounds/bell.mp3'));
+            // Dispose the player after playback finishes to release resources
+            player.onPlayerComplete.listen((_) {
+              player.dispose();
+            });
           } catch (e) {
-            debugPrint(
-                "Error playing sound: $e. Make sure assets/sounds/bell.mp3 exists.");
-            // Fallback
-            await _audioPlayer.play(AssetSource('sounds/bell.mp3'));
+            debugPrint("Error playing sound: $e");
           }
         }
       }
