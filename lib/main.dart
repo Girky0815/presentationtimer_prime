@@ -142,11 +142,16 @@ class TimerState extends ChangeNotifier {
   bool isRunning = false;
   int elapsedSeconds = 0;
   String mode = 'stopwatch'; // 'timer' | 'stopwatch'
-  // Removed single _audioPlayer instance to use one-shot players
+
+  // Audio Pool for low latency playback
+  final List<AudioPlayer> _audioPool = [];
+  static const int _poolSize = 5;
+  int _poolIndex = 0;
 
   final PreferencesService _prefs = PreferencesService();
 
   TimerState() {
+    _initAudio();
     _loadSettings();
   }
 
@@ -171,7 +176,17 @@ class TimerState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // _initAudio removed as we create players on demand
+  Future<void> _initAudio() async {
+    // Initialize Audio Pool
+    for (int i = 0; i < _poolSize; i++) {
+      final player = AudioPlayer();
+      // Preload the source
+      await player.setSource(AssetSource('sounds/bell.mp3'));
+      await player
+          .setReleaseMode(ReleaseMode.stop); // Reset to start after play
+      _audioPool.add(player);
+    }
+  }
 
   int get totalDuration => durationMin * 60 + durationSec;
 
@@ -270,28 +285,39 @@ class TimerState extends ChangeNotifier {
       if (bell.totalSeconds == elapsedSeconds) {
         // Play sound 'bell.count' times
         for (int i = 0; i < bell.count; i++) {
-          // Delay between bells (skip for the first one)
-          if (i > 0) await Future.delayed(const Duration(milliseconds: 800));
+          // Fire and forget playback to ensure consistent timing
+          _playBellFromPool();
 
-          try {
-            // One-shot player strategy: Create a new instance for every sound
-            // This avoids state conflicts and ensures every 'play' command is fresh
-            final player = AudioPlayer();
-            await player.play(AssetSource('sounds/bell.mp3'));
-            // Dispose the player after playback finishes to release resources
-            player.onPlayerComplete.listen((_) {
-              player.dispose();
-            });
-          } catch (e) {
-            debugPrint("Error playing sound: $e");
+          // Delay between bells (500ms)
+          if (i < bell.count - 1) {
+            await Future.delayed(const Duration(milliseconds: 500));
           }
         }
       }
     }
   }
-}
 
-// --- UI Components ---
+  void _playBellFromPool() {
+    try {
+      // Use Audio Pool for low latency
+      if (_audioPool.isNotEmpty) {
+        final player = _audioPool[_poolIndex];
+        // Resume is faster than play because source is already loaded
+        player.resume();
+
+        // Move to next player in pool (round-robin)
+        _poolIndex = (_poolIndex + 1) % _poolSize;
+      } else {
+        // Fallback if pool is empty (should not happen)
+        final player = AudioPlayer();
+        player.play(AssetSource('sounds/bell.mp3'));
+        player.onPlayerComplete.listen((_) => player.dispose());
+      }
+    } catch (e) {
+      debugPrint("Error playing sound: $e");
+    }
+  }
+}
 
 class PresentationTimerApp extends StatelessWidget {
   const PresentationTimerApp({super.key});
