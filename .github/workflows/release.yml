@@ -28,24 +28,6 @@ jobs:
       - name: Flutter のセットアップ
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
-          
-      # 4. パッケージ取得
-      - name: 依存関係のインストール
-        run: flutter pub get
-
-      # 4.5. Android署名ファイルの準備
-      - name: キーストアのデコード
-        run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" > android/app/upload-keystore.jks.base64
-          certutil -decode android/app/upload-keystore.jks.base64 android/app/upload-keystore.jks
-        shell: cmd
-
-      - name: key.properties の作成
-        run: |
-          echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" > android/key.properties
-        shell: bash
-
       # 5. Windowsアプリのビルド
       - name: Windowsアプリ(x64)のビルド
         run: flutter build windows --release
