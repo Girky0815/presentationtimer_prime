@@ -19,6 +19,7 @@ dependencies:
   provider: ^6.1.1
   package_info_plus: ^9.0.0
   dynamic_color: ^1.8.1
+  shared_preferences: ^2.5.3
   # material_color_utilities: ^0.13.0  # 現状では Flutter に紐づけられているため，指定不可
   # lucide_icons は削除（標準Material Iconsを使用）
 

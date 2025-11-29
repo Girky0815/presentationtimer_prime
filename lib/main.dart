@@ -8,6 +8,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'services/preferences_service.dart';
 
 void main() {
   runApp(
@@ -98,6 +99,22 @@ class BellConfig {
       {required this.id, required this.min, required this.sec, this.count = 1});
 
   int get totalSeconds => min * 60 + sec;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'min': min,
+        'sec': sec,
+        'count': count,
+      };
+
+  factory BellConfig.fromJson(Map<String, dynamic> json) {
+    return BellConfig(
+      id: json['id'],
+      min: json['min'],
+      sec: json['sec'],
+      count: json['count'] ?? 1,
+    );
+  }
 }
 
 // --- State Management ---
@@ -127,8 +144,31 @@ class TimerState extends ChangeNotifier {
   String mode = 'stopwatch'; // 'timer' | 'stopwatch'
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  final PreferencesService _prefs = PreferencesService();
+
   TimerState() {
     _initAudio();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    // Load Theme
+    themeMode = await _prefs.loadThemeMode();
+
+    // Load Duration
+    final duration = await _prefs.loadDuration();
+    if (duration != null) {
+      durationMin = duration['min']!;
+      durationSec = duration['sec']!;
+    }
+
+    // Load Bells
+    final loadedBells = await _prefs.loadBells();
+    if (loadedBells != null) {
+      bells = loadedBells;
+    }
+
+    notifyListeners();
   }
 
   Future<void> _initAudio() async {
@@ -169,6 +209,7 @@ class TimerState extends ChangeNotifier {
 
   void setThemeMode(ThemeMode mode) {
     themeMode = mode;
+    _prefs.saveThemeMode(mode);
     notifyListeners();
   }
 
@@ -202,6 +243,7 @@ class TimerState extends ChangeNotifier {
   void updateDuration(int min, int sec) {
     durationMin = min;
     durationSec = sec;
+    _prefs.saveDuration(min, sec);
     notifyListeners();
   }
 
@@ -212,11 +254,13 @@ class TimerState extends ChangeNotifier {
             : 0) +
         1;
     bells.add(BellConfig(id: newId, min: min, sec: sec, count: count));
+    _prefs.saveBells(bells);
     notifyListeners();
   }
 
   void removeBell(int id) {
     bells.removeWhere((b) => b.id == id);
+    _prefs.saveBells(bells);
     notifyListeners();
   }
 
@@ -225,6 +269,7 @@ class TimerState extends ChangeNotifier {
     if (min != null) bell.min = min;
     if (sec != null) bell.sec = sec;
     if (count != null) bell.count = count;
+    _prefs.saveBells(bells);
     notifyListeners();
   }
 
