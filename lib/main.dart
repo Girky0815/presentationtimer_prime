@@ -154,6 +154,7 @@ class TimerState extends ChangeNotifier {
   Future<void> _loadSettings() async {
     // Load Theme
     themeMode = await _prefs.loadThemeMode();
+    useDynamicColor = await _prefs.loadDynamicColor();
 
     // Load Duration
     final duration = await _prefs.loadDuration();
@@ -215,6 +216,7 @@ class TimerState extends ChangeNotifier {
 
   void toggleDynamicColor(bool value) {
     useDynamicColor = value;
+    _prefs.saveDynamicColor(value);
     notifyListeners();
   }
 

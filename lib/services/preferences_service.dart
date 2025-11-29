@@ -8,6 +8,7 @@ class PreferencesService {
   static const String _keyDurationMin = 'duration_min';
   static const String _keyDurationSec = 'duration_sec';
   static const String _keyBells = 'bells';
+  static const String _keyUseDynamicColor = 'use_dynamic_color';
 
   Future<void> saveThemeMode(ThemeMode mode) async {
     final prefs = await SharedPreferences.getInstance();
@@ -21,6 +22,16 @@ class PreferencesService {
       return ThemeMode.values[index];
     }
     return ThemeMode.system; // Default
+  }
+
+  Future<void> saveDynamicColor(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyUseDynamicColor, value);
+  }
+
+  Future<bool> loadDynamicColor() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyUseDynamicColor) ?? false;
   }
 
   Future<void> saveDuration(int min, int sec) async {
