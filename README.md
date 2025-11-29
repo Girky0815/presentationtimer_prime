@@ -23,12 +23,10 @@ Material 3 Expressive 風 プレゼンテーション用タイマー
 - .exeを実行する
 ### Android arm64の場合
 - (おすすめ)Obtainium を使用してインストールする
-  - ↓ここからどうぞ
+  - ↓ここからどうぞ(日本語漢字が中国語フォントで表示されるため文字が見づらいが)
   - <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/girky0815/presentationtimer_prime"><img src="https://github.com/ImranR98/Obtainium/blob/main/assets/graphics/badge_obtainium.png" alt="Obtainiumからインストール" height="50"></a>
 - リリースページのarm用.apkファイルをダウンロードし，インストールする
   - この際，「提供元不明のアプリをインストールする」権限を許可する必要がある
-
-
 
 ## 免責事項
 - Google Antigravity(Gemini 3 Pro)を使用して作成した
