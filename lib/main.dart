@@ -1173,7 +1173,10 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                 ],
                               ),
                             ),
-                            const Divider(height: 1),
+                            Divider(
+                              height: 4,
+                              color: colorScheme.surfaceContainerHigh,
+                            ),
                             SwitchListTile(
                               title: const Text("ダイナミックカラー(beta)",
                                   style:
@@ -1350,27 +1353,46 @@ class _SettingsPanelState extends State<SettingsPanel> {
                               color: colorScheme.outlineVariant
                                   .withValues(alpha: 0.2)),
                         ),
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
+                        child: Column(
                           children: [
-                            Icon(Icons.info, color: colorScheme.primary),
-                            const SizedBox(width: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("プレゼンタイマー Prime (仮)",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: colorScheme.onSurface)),
-                                if (_packageInfo != null)
-                                  Text(
+                            ListTile(
+                              leading: Icon(Icons.palette_outlined,
+                                  color: colorScheme.primary),
+                              title: Text("カラーパレット一覧",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onSurface)),
+                              subtitle: Text("(デバッグ用)カラーパレットを表示",
+                                  style:
+                                      TextStyle(color: colorScheme.onSurface)),
+                              trailing: Icon(Icons.arrow_forward_ios,
+                                  size: 16,
+                                  color: colorScheme.onSurfaceVariant),
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ColorSchemePreviewScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            Divider(
+                                height: 1,
+                                color: colorScheme.surfaceContainerHigh),
+                            ListTile(
+                              leading: Icon(Icons.info_outline,
+                                  color: colorScheme.primary),
+                              title: Text("プレゼンタイマー Prime (仮)",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onSurface)),
+                              subtitle: _packageInfo != null
+                                  ? Text(
                                       "バージョン ${_packageInfo!.version} (ビルド ${_packageInfo!.buildNumber})",
                                       style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: colorScheme.secondary)),
-                              ],
+                                          color: colorScheme.onSurfaceVariant))
+                                  : null,
                             ),
                           ],
                         ),
@@ -1729,4 +1751,232 @@ String _formatTime(int totalSeconds) {
   final s = (absSeconds % 60).toString().padLeft(2, '0');
   final sign = totalSeconds < 0 ? '-' : '';
   return "$sign$m:$s";
+}
+
+class ColorSchemePreviewScreen extends StatelessWidget {
+  const ColorSchemePreviewScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final state = context.watch<TimerState>();
+
+    // Helper to build color data tuple
+    (String, Color, Color) c(String name, Color color, Color onColor) =>
+        (name, color, onColor);
+
+    final coreColors = [
+      c("Primary", colorScheme.primary, colorScheme.onPrimary),
+      c("On Primary", colorScheme.onPrimary, colorScheme.primary),
+      c("Primary Container", colorScheme.primaryContainer,
+          colorScheme.onPrimaryContainer),
+      c("On Primary Container", colorScheme.onPrimaryContainer,
+          colorScheme.primaryContainer),
+      c("Secondary", colorScheme.secondary, colorScheme.onSecondary),
+      c("On Secondary", colorScheme.onSecondary, colorScheme.secondary),
+      c("Secondary Container", colorScheme.secondaryContainer,
+          colorScheme.onSecondaryContainer),
+      c("On Secondary Container", colorScheme.onSecondaryContainer,
+          colorScheme.secondaryContainer),
+      c("Tertiary", colorScheme.tertiary, colorScheme.onTertiary),
+      c("On Tertiary", colorScheme.onTertiary, colorScheme.tertiary),
+      c("Tertiary Container", colorScheme.tertiaryContainer,
+          colorScheme.onTertiaryContainer),
+      c("On Tertiary Container", colorScheme.onTertiaryContainer,
+          colorScheme.tertiaryContainer),
+      c("Error", colorScheme.error, colorScheme.onError),
+      c("On Error", colorScheme.onError, colorScheme.error),
+      c("Error Container", colorScheme.errorContainer,
+          colorScheme.onErrorContainer),
+      c("On Error Container", colorScheme.onErrorContainer,
+          colorScheme.errorContainer),
+    ];
+
+    final surfaceColors = [
+      c("Surface", colorScheme.surface, colorScheme.onSurface),
+      c("On Surface", colorScheme.onSurface, colorScheme.surface),
+      c("Surface Variant", colorScheme.surfaceVariant,
+          colorScheme.onSurfaceVariant),
+      c("On Surface Variant", colorScheme.onSurfaceVariant,
+          colorScheme.surfaceVariant),
+      c("Inverse Surface", colorScheme.inverseSurface,
+          colorScheme.onInverseSurface),
+      c("On Inverse Surface", colorScheme.onInverseSurface,
+          colorScheme.inverseSurface),
+      c("Inverse Primary", colorScheme.inversePrimary, colorScheme.onPrimary),
+    ];
+
+    final containerColors = [
+      c("Surface Container Lowest", colorScheme.surfaceContainerLowest,
+          colorScheme.onSurface),
+      c("Surface Container Low", colorScheme.surfaceContainerLow,
+          colorScheme.onSurface),
+      c("Surface Container", colorScheme.surfaceContainer,
+          colorScheme.onSurface),
+      c("Surface Container High", colorScheme.surfaceContainerHigh,
+          colorScheme.onSurface),
+      c("Surface Container Highest", colorScheme.surfaceContainerHighest,
+          colorScheme.onSurface),
+      c("Surface Bright", colorScheme.surfaceBright, colorScheme.onSurface),
+      c("Surface Dim", colorScheme.surfaceDim, colorScheme.onSurface),
+    ];
+
+    final utilityColors = [
+      c("Outline", colorScheme.outline, colorScheme.surface),
+      c("Outline Variant", colorScheme.outlineVariant, colorScheme.onSurface),
+      c("Scrim", colorScheme.scrim, Colors.white),
+      c("Shadow", colorScheme.shadow, Colors.white),
+      c("Surface Tint", colorScheme.surfaceTint, colorScheme.onPrimary),
+    ];
+
+    return Scaffold(
+      backgroundColor: colorScheme.surfaceContainerHigh,
+      appBar: AppBar(
+        title: const Text("カラーパレット"),
+        backgroundColor: colorScheme.surfaceContainerHigh,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _buildDynamicColorSection(context, state),
+          const SizedBox(height: 24),
+          _buildSection(context, "コアカラー", coreColors),
+          const SizedBox(height: 24),
+          _buildSection(context, "サーフェスカラー", surfaceColors),
+          const SizedBox(height: 24),
+          _buildSection(context, "コンテナカラー", containerColors),
+          const SizedBox(height: 24),
+          _buildSection(context, "ユーティリティカラー", utilityColors),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDynamicColorSection(BuildContext context, TimerState state) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16, bottom: 8),
+          child: Text("設定",
+              style: TextStyle(
+                  color: colorScheme.primary, fontWeight: FontWeight.bold)),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceBright,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
+          ),
+          child: Column(
+            children: [
+              SwitchListTile(
+                title: Text("ダイナミックカラー(beta)",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface)),
+                subtitle: Text("OSのテーマカラーに合わせてアプリのカラーパレットを変更します",
+                    style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                value: state.useDynamicColor,
+                onChanged: (value) {
+                  state.toggleDynamicColor(value);
+                },
+                secondary: Icon(Icons.palette_outlined,
+                    color: colorScheme.onSurfaceVariant),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSection(
+      BuildContext context, String title, List<(String, Color, Color)> colors) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16, bottom: 8),
+          child: Text(title,
+              style: TextStyle(
+                  color: colorScheme.primary, fontWeight: FontWeight.bold)),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceBright,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
+          ),
+          child: Column(
+            children: [
+              for (int i = 0; i < colors.length; i++) ...[
+                if (i > 0)
+                  Divider(height: 1, color: colorScheme.surfaceContainerHigh),
+                _buildColorRow(context, colors[i]),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildColorRow(
+      BuildContext context, (String, Color, Color) colorInfo) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final name = colorInfo.$1;
+    final color = colorInfo.$2;
+    final hexCode =
+        '#${color.value.toRadixString(16).toUpperCase().padLeft(8, '0')}';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontFamily: 'Google Sans Flex',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: colorScheme.onSurface,
+                    fontVariations: const [FontVariation('ROND', 100)],
+                  ),
+                ),
+                Text(
+                  hexCode,
+                  style: TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
