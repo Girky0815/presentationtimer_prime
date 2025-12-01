@@ -1832,7 +1832,7 @@ class ColorSchemePreviewScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainerHigh,
       appBar: AppBar(
-        title: const Text("カラーパレット"),
+        title: const Text("カラーパレット一覧"),
         backgroundColor: colorScheme.surfaceContainerHigh,
       ),
       body: ListView(
@@ -1855,6 +1855,15 @@ class ColorSchemePreviewScreen extends StatelessWidget {
 
   Widget _buildDynamicColorSection(BuildContext context, TimerState state) {
     final colorScheme = Theme.of(context).colorScheme;
+
+    final WidgetStateProperty<Icon?> thumbIcon =
+        WidgetStateProperty.resolveWith<Icon?>((states) {
+      if (states.contains(WidgetState.selected)) {
+        return const Icon(Icons.check);
+      }
+      return const Icon(Icons.close);
+    });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1878,7 +1887,8 @@ class ColorSchemePreviewScreen extends StatelessWidget {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: colorScheme.onSurface)),
-                subtitle: Text("OSのテーマカラーに合わせてアプリのカラーパレットを変更します",
+                subtitle: Text(
+                    "OSのテーマカラーに合わせてアプリのカラーパレットを変更します\nOS側でテーマカラーを変更した場合は、アプリを再起動すると適用されます。",
                     style: TextStyle(color: colorScheme.onSurfaceVariant)),
                 value: state.useDynamicColor,
                 onChanged: (value) {
@@ -1886,6 +1896,7 @@ class ColorSchemePreviewScreen extends StatelessWidget {
                 },
                 secondary: Icon(Icons.palette_outlined,
                     color: colorScheme.onSurfaceVariant),
+                thumbIcon: thumbIcon,
               ),
             ],
           ),
@@ -1932,8 +1943,9 @@ class ColorSchemePreviewScreen extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final name = colorInfo.$1;
     final color = colorInfo.$2;
+    // Remove alpha (first 2 chars) and keep 6 chars
     final hexCode =
-        '#${color.value.toRadixString(16).toUpperCase().padLeft(8, '0')}';
+        '#${color.value.toRadixString(16).toUpperCase().padLeft(8, '0').substring(2)}';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1967,9 +1979,10 @@ class ColorSchemePreviewScreen extends StatelessWidget {
                 Text(
                   hexCode,
                   style: TextStyle(
-                    fontFamily: 'monospace',
+                    fontFamily: 'Google Sans Flex',
                     fontSize: 13,
                     color: colorScheme.onSurfaceVariant,
+                    fontVariations: const [FontVariation('ROND', 100)],
                   ),
                 ),
               ],
