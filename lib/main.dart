@@ -26,6 +26,7 @@ const lightColorScheme = ColorScheme(
   onPrimary: Color(0xFFE4FFF2),
   primaryContainer: Color(0xFFAEF0D7),
   onPrimaryContainer: Color(0xFF175C49),
+  inversePrimary: Color(0xFFB9FCE2),
   secondary: Color(0xFF4C645A),
   onSecondary: Color(0xFFE4FFF2),
   secondaryContainer: Color(0xFFCEE9DC),
@@ -38,20 +39,24 @@ const lightColorScheme = ColorScheme(
   onError: Color(0xFFFFF7F6),
   errorContainer: Color(0xFFFA746F),
   onErrorContainer: Color(0xFF6E0A12),
-  surface: Color(0xFFF6FAF6),
-  onSurface: Color(0xFF2B3530),
-  surfaceContainerHighest: Color(0xFFDAE5DF),
-  outline: Color(0xFF737D78),
-  outlineVariant: Color(0xFFAAB4AE),
-  // Default fallbacks for others
-  surfaceContainerLow: Color(0xFFEFF5F0),
-  surfaceContainer: Color(0xFFE8F0EA),
-  inverseSurface: Color(0xFF0B0F0D),
-  onInverseSurface: Color(0xFF999E9B),
-  inversePrimary: Color(0xFFB9FCE2),
-  // Explicit background mapping
   background: Color(0xFFF6FAF6),
   onBackground: Color(0xFF2B3530),
+  surface: Color(0xFFF6FAF6),
+  onSurface: Color(0xFF2B3530),
+  surfaceVariant: Color(0xFFDAE5DF),
+  onSurfaceVariant: Color(0xFF57615C),
+  inverseSurface: Color(0xFF0B0F0D),
+  onInverseSurface: Color(0xFF999E9B),
+  surfaceContainerLowest: Color(0xFFFFFFFF),
+  surfaceContainerLow: Color(0xFFEFF5F0),
+  surfaceContainer: Color(0xFFE8F0EA),
+  surfaceContainerHigh: Color(0xFFE1EAE4),
+  surfaceContainerHighest: Color(0xFFDAE5DF),
+  surfaceDim: Color(0xFFD2DDD6),
+  surfaceBright: Color(0xFFF6FAF6),
+  outline: Color(0xFF737D78),
+  outlineVariant: Color(0xFFAAB4AE),
+  scrim: Color(0xFF000000),
 );
 
 const darkColorScheme = ColorScheme(
@@ -60,6 +65,7 @@ const darkColorScheme = ColorScheme(
   onPrimary: Color(0xFF174839),
   primaryContainer: Color(0xFF2C5B4B),
   onPrimaryContainer: Color(0xFFBCEED9),
+  inversePrimary: Color(0xFF396858),
   secondary: Color(0xFFB2CCC0),
   onSecondary: Color(0xFF2E453C),
   secondaryContainer: Color(0xFF294037),
@@ -72,20 +78,24 @@ const darkColorScheme = ColorScheme(
   onError: Color(0xFF490006),
   errorContainer: Color(0xFF871F21),
   onErrorContainer: Color(0xFFFF9993),
-  surface: Color(0xFF0B0F0D),
-  onSurface: Color(0xFFDDE8E1),
-  surfaceContainerHighest: Color(0xFF1E2824),
-  outline: Color(0xFF6D7872),
-  outlineVariant: Color(0xFF404A45),
-  // Default fallbacks for others
-  surfaceContainerLow: Color(0xFF0E1512),
-  surfaceContainer: Color(0xFF141B18),
-  inverseSurface: Color(0xFFF6FAF6),
-  onInverseSurface: Color(0xFF515653),
-  inversePrimary: Color(0xFF396858),
-  // Explicit background mapping
   background: Color(0xFF0B0F0D),
   onBackground: Color(0xFFDDE8E1),
+  surface: Color(0xFF0B0F0D),
+  onSurface: Color(0xFFDDE8E1),
+  surfaceVariant: Color(0xFF1E2824),
+  onSurfaceVariant: Color(0xFFA3AEA8),
+  inverseSurface: Color(0xFFF6FAF6),
+  onInverseSurface: Color(0xFF515653),
+  surfaceContainerLowest: Color(0xFF000000),
+  surfaceContainerLow: Color(0xFF0E1512),
+  surfaceContainer: Color(0xFF141B18),
+  surfaceContainerHigh: Color(0xFF19211E),
+  surfaceContainerHighest: Color(0xFF1E2824),
+  surfaceDim: Color(0xFF0B0F0D),
+  surfaceBright: Color(0xFF242E2A),
+  outline: Color(0xFF6D7872),
+  outlineVariant: Color(0xFF404A45),
+  scrim: Color(0xFF000000),
 );
 
 // --- Models ---
@@ -349,9 +359,10 @@ class PresentationTimerApp extends StatelessWidget {
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightScheme,
-            scaffoldBackgroundColor: lightScheme.surfaceContainer,
-            cardTheme: CardThemeData(color: lightScheme.surface),
-            dialogTheme: DialogThemeData(backgroundColor: lightScheme.surface),
+            scaffoldBackgroundColor: lightScheme.surfaceContainerHigh,
+            cardTheme: CardThemeData(color: lightScheme.surfaceBright),
+            dialogTheme:
+                DialogThemeData(backgroundColor: lightScheme.surfaceBright),
             textTheme: _buildSmartTextTheme(
               ThemeData(brightness: Brightness.light).textTheme,
             ),
@@ -359,9 +370,10 @@ class PresentationTimerApp extends StatelessWidget {
           darkTheme: ThemeData(
             useMaterial3: true,
             colorScheme: darkScheme,
-            scaffoldBackgroundColor: darkScheme.surfaceContainer,
-            cardTheme: CardThemeData(color: darkScheme.surface),
-            dialogTheme: DialogThemeData(backgroundColor: darkScheme.surface),
+            scaffoldBackgroundColor: darkScheme.surfaceContainerHigh,
+            cardTheme: CardThemeData(color: darkScheme.surfaceBright),
+            dialogTheme:
+                DialogThemeData(backgroundColor: darkScheme.surfaceBright),
             textTheme: _buildSmartTextTheme(
               ThemeData(brightness: Brightness.dark).textTheme,
             ),
@@ -1051,7 +1063,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: colorScheme.surface,
+                          color: colorScheme.surfaceBright,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                               color: colorScheme.outlineVariant
@@ -1171,7 +1183,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                               horizontal: 16),
                                           padding: const EdgeInsets.all(4),
                                           decoration: BoxDecoration(
-                                            color: colorScheme.surface,
+                                            color: colorScheme.surfaceBright,
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                           ),
@@ -1216,7 +1228,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: colorScheme.surface,
+                          color: colorScheme.surfaceBright,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                               color: colorScheme.outlineVariant
@@ -1287,7 +1299,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: colorScheme.surface,
+                          color: colorScheme.surfaceBright,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Row(
@@ -1317,7 +1329,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: colorScheme.surface,
+                          color: colorScheme.surfaceBright,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                               color: colorScheme.outlineVariant
@@ -1402,7 +1414,7 @@ class _BellEditDialogState extends State<BellEditDialog> {
     final isEditing = widget.initialBell != null;
 
     return Dialog(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colorScheme.surfaceBright,
       surfaceTintColor: colorScheme.surfaceTint,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       child: Container(
