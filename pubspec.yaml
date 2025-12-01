@@ -2,7 +2,7 @@ name: presentation_timer
 description: "A Material 3 Expressive Presentation Timer."
 publish_to: 'none'
 # ↓バージョン文字列(バージョン+ビルド番号)
-version: 3.1.1+311
+version: 3.2.0+320
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
