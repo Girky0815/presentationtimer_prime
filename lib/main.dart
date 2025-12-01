@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -156,12 +157,25 @@ class TimerState extends ChangeNotifier {
   // SoLoud engine
   final SoLoud _soloud = SoLoud.instance;
   AudioSource? _bellSource;
+  late final AppLifecycleListener _lifecycleListener;
 
   final PreferencesService _prefs = PreferencesService();
 
   TimerState() {
+    _lifecycleListener = AppLifecycleListener(
+      onExitRequested: _onExitRequested,
+    );
     _initAudio();
     _loadSettings();
+  }
+
+  Future<ui.AppExitResponse> _onExitRequested() async {
+    try {
+      _soloud.deinit();
+    } catch (e) {
+      debugPrint("Error during deinit: $e");
+    }
+    return ui.AppExitResponse.exit;
   }
 
   Future<void> _loadSettings() async {
@@ -317,6 +331,7 @@ class TimerState extends ChangeNotifier {
 
   @override
   void dispose() {
+    _lifecycleListener.dispose();
     _soloud.deinit();
     super.dispose();
   }
