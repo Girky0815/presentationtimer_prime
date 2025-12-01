@@ -352,8 +352,16 @@ class PresentationTimerApp extends StatelessWidget {
         if (timerState.useDynamicColor &&
             lightDynamic != null &&
             darkDynamic != null) {
-          lightScheme = lightDynamic.harmonized();
-          darkScheme = darkDynamic.harmonized();
+          // Use fromSeed to ensure all surface variants are generated correctly
+          // harmonized() alone might not fill all surface container roles on some Android versions
+          lightScheme = ColorScheme.fromSeed(
+            seedColor: lightDynamic.primary,
+            brightness: Brightness.light,
+          );
+          darkScheme = ColorScheme.fromSeed(
+            seedColor: darkDynamic.primary,
+            brightness: Brightness.dark,
+          );
         } else {
           lightScheme = lightColorScheme;
           darkScheme = darkColorScheme;
