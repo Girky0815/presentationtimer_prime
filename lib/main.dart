@@ -1888,7 +1888,7 @@ class ColorSchemePreviewScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: colorScheme.onSurface)),
                 subtitle: Text(
-                    "OSのテーマカラーに合わせてアプリのカラーパレットを変更します\nOS側でテーマカラーを変更した場合は、アプリを再起動すると適用されます。",
+                    "OSのテーマカラーに合わせてアプリのカラーパレットを変更します\nOSのテーマカラーを変更した場合は、アプリを再起動すると適用されます。",
                     style: TextStyle(color: colorScheme.onSurfaceVariant)),
                 value: state.useDynamicColor,
                 onChanged: (value) {
