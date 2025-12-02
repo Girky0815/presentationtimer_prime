@@ -1088,7 +1088,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                 ),
                 Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 48),
                     children: [
                       // Appearance
                       Padding(
@@ -1834,10 +1834,10 @@ class ColorSchemePreviewScreen extends StatelessWidget {
     final surfaceColors = [
       c("Surface", colorScheme.surface, colorScheme.onSurface),
       c("On Surface", colorScheme.onSurface, colorScheme.surface),
-      c("Surface Variant", colorScheme.surfaceVariant,
+      c("Surface Variant", colorScheme.surfaceContainerHighest,
           colorScheme.onSurfaceVariant),
       c("On Surface Variant", colorScheme.onSurfaceVariant,
-          colorScheme.surfaceVariant),
+          colorScheme.surfaceContainerHighest),
       c("Inverse Surface", colorScheme.inverseSurface,
           colorScheme.onInverseSurface),
       c("On Inverse Surface", colorScheme.onInverseSurface,
@@ -1870,38 +1870,59 @@ class ColorSchemePreviewScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainerHigh,
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
-            style: IconButton.styleFrom(
-              backgroundColor: colorScheme.surfaceDim,
-              shape: const CircleBorder(),
+      body: SafeArea(
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Column(
+              children: [
+                // Custom Header
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: IconButton.styleFrom(
+                          backgroundColor: colorScheme.surfaceDim,
+                          shape: const CircleBorder(),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Text(
+                        "カラーパレット一覧",
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 48),
+                    children: [
+                      _buildDynamicColorSection(context, state),
+                      const SizedBox(height: 24),
+                      _buildSection(context, "コアカラー", coreColors),
+                      const SizedBox(height: 24),
+                      _buildSection(context, "サーフェスカラー", surfaceColors),
+                      const SizedBox(height: 24),
+                      _buildSection(context, "コンテナカラー", containerColors),
+                      const SizedBox(height: 24),
+                      _buildSection(context, "ユーティリティカラー", utilityColors),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-        title: const Text(
-          "カラーパレット一覧",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: colorScheme.surfaceContainerHigh,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _buildDynamicColorSection(context, state),
-          const SizedBox(height: 24),
-          _buildSection(context, "コアカラー", coreColors),
-          const SizedBox(height: 24),
-          _buildSection(context, "サーフェスカラー", surfaceColors),
-          const SizedBox(height: 24),
-          _buildSection(context, "コンテナカラー", containerColors),
-          const SizedBox(height: 24),
-          _buildSection(context, "ユーティリティカラー", utilityColors),
-          const SizedBox(height: 24),
-        ],
       ),
     );
   }
