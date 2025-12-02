@@ -38,6 +38,7 @@ MacOS/iOS/iPadOS: 対応予定なし(作者は該当OSのデバイスを持っ�
 - Google Antigravity(Gemini 3 Pro)を使用して作成した．
   - 作者はコードの品質は保証しない．
   - 本ソフトウェアはGoogle Antigravityの実験および作者のアプリ開発における自己満足のために作成している．
+- 言語は日本語のみ．
 - 本ソフトウェア使用により利用者に発生した損害について，作者はいかなる責任も負わない(要するに自己責任)．
 - 本ソフトウェアの使用によるいかなる損失も補償しない．
 
@@ -46,6 +47,8 @@ MacOS/iOS/iPadOS: 対応予定なし(作者は該当OSのデバイスを持っ�
 - ~~Flutter が Material 3 Expressive に完全対応していないため，ダイナミックカラーをONにすると背景色とカードが一体化して見づらくなることがある．~~
   - ~~Android 版では無効化推奨(Windows 版では問題がないのでお好みで)．~~
   - 本問題はv4.1.2で修正済．ダイナミックカラーの使用はお好みでどうぞ．
+- アスペクト比が20:9など細長い場合，タイマーの表示が小さい．
+  - UIを改造する必要があるため，すぐの対応は困難．スマートフォン版では横画面非推奨．
 
 ## できること/できないこと
 ### できること
@@ -70,11 +73,21 @@ MacOS/iOS/iPadOS: 対応予定なし(作者は該当OSのデバイスを持っ�
   - 英語フォント(時刻など，日本語が混じらない箇所): [Google Sans Flex](https://fonts.google.com/specimen/Google+Sans+Flex)
     - 現時点でGoogle Sans FlexにFlutterが対応していないため，リポジトリに本フォントを埋め込んでいる
 - 現在，ベルの音はポケットサウンド様の音源を使用している．
-  - https://pocket-se.info
+  - [https://pocket-se.info](https://pocket-se.info)
 - Flutter はBSDライセンスのもと提供されている．
 
-## スクリーンショット集
-v1.0.5時点
+## スクリーンショット集(Windows)
+(新UI)v5.0.0 時点
+
+<img width="40%" height="793" alt="image" src="https://github.com/user-attachments/assets/f997437a-7b23-40e9-9182-93f8732d9e83" alt="タイマー画面"/>
+<img width="40%" height="793" alt="image" src="https://github.com/user-attachments/assets/87f683db-5c77-4983-953c-3f5a89e62990" alt="設定画面"/>
+<img width="40%" height="793" alt="image" src="https://github.com/user-attachments/assets/ec3e76f4-d2b7-4690-996c-ce77d15af372" alt="ダークテーマON"/>
+<img width="40%" height="793" alt="image" src="https://github.com/user-attachments/assets/5413b0ff-3ad3-405d-bc01-afee42b11b5f" alt="設定画面: ダイナミックカラー有効(アクセントカラー青)" />
+<img width="40%" height="793" alt="image" src="https://github.com/user-attachments/assets/90193031-2366-4aa4-826a-420d09ffc52b" alt="誰得機能 カラーパレット一覧"/>
+<img width="40%" height="793" alt="image" src="https://github.com/user-attachments/assets/2a358186-6b41-4e5b-b1be-27e70aa7d447" alt="誰得機能 カラーパレット一覧: ダイナミックカラー有効(青)"/>
+
+---
+(旧UI)v1.0.5 時点
 
 <img width="40%" height="713" alt="image" src="https://github.com/user-attachments/assets/cec1e898-334a-451d-b67f-89d8a45cca18" alt="デフォルト画面" />
 <img width="40%" height="713" alt="image" src="https://github.com/user-attachments/assets/bf11d495-63ab-4c56-82bd-81144a53fdcf" alt="ベル設定UI"/>
