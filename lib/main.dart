@@ -976,6 +976,40 @@ class _BellChip extends StatelessWidget {
   }
 }
 
+class ExpressiveSection extends StatelessWidget {
+  final List<Widget> children;
+
+  const ExpressiveSection({super.key, required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final count = children.length;
+
+    return Column(
+      children: [
+        for (int i = 0; i < count; i++) ...[
+          if (i > 0) const SizedBox(height: 2),
+          Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceBright,
+              border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+              ),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(i == 0 ? 20.0 : 4.0),
+                bottom: Radius.circular(i == count - 1 ? 20.0 : 4.0),
+              ),
+            ),
+            child: children[i],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
 class SettingsPanel extends StatefulWidget {
   const SettingsPanel({super.key});
 
@@ -1098,171 +1132,156 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                 color: colorScheme.primary,
                                 fontWeight: FontWeight.bold)),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceBright,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                              color: colorScheme.outlineVariant
-                                  .withValues(alpha: 0.2)),
-                        ),
-                        child: Column(
-                          children: [
-                            // Theme Mode Selection
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        state.themeMode == ThemeMode.system
-                                            ? Icons.brightness_auto
-                                            : state.themeMode == ThemeMode.light
-                                                ? Icons.light_mode
-                                                : Icons.dark_mode,
-                                        size: 20,
-                                        color: colorScheme.primary,
+                      ExpressiveSection(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      state.themeMode == ThemeMode.system
+                                          ? Icons.brightness_auto
+                                          : state.themeMode == ThemeMode.light
+                                              ? Icons.light_mode
+                                              : Icons.dark_mode,
+                                      size: 20,
+                                      color: colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text("テーマ",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: colorScheme.onSurface)),
+                                  ],
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color:
+                                            colorScheme.surfaceContainerHighest,
+                                        borderRadius: BorderRadius.circular(50),
+                                        border: Border.all(
+                                            color: colorScheme.outlineVariant),
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text("テーマ",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: colorScheme.onSurface)),
-                                    ],
-                                  ),
-                                  const SizedBox(width: 8), // Add spacing
-                                  Flexible(
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: colorScheme
-                                              .surfaceContainerHighest,
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          border: Border.all(
-                                              color:
-                                                  colorScheme.outlineVariant),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              _buildThemeButton(
-                                                context,
-                                                mode: ThemeMode.system,
-                                                icon: Icons.brightness_auto,
-                                                label: "システム",
-                                                isSelected: state.themeMode ==
-                                                    ThemeMode.system,
-                                                onTap: () => state.setThemeMode(
-                                                    ThemeMode.system),
-                                              ),
-                                              Container(
-                                                  width: 1,
-                                                  height: 32,
-                                                  color: colorScheme
-                                                      .outlineVariant),
-                                              _buildThemeButton(
-                                                context,
-                                                mode: ThemeMode.light,
-                                                icon: Icons.light_mode,
-                                                label: "ライト",
-                                                isSelected: state.themeMode ==
-                                                    ThemeMode.light,
-                                                onTap: () => state.setThemeMode(
-                                                    ThemeMode.light),
-                                              ),
-                                              Container(
-                                                  width: 1,
-                                                  height: 32,
-                                                  color: colorScheme
-                                                      .outlineVariant),
-                                              _buildThemeButton(
-                                                context,
-                                                mode: ThemeMode.dark,
-                                                icon: Icons.dark_mode,
-                                                label: "ダーク",
-                                                isSelected: state.themeMode ==
-                                                    ThemeMode.dark,
-                                                onTap: () => state.setThemeMode(
-                                                    ThemeMode.dark),
-                                              ),
-                                            ],
-                                          ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            _buildThemeButton(
+                                              context,
+                                              mode: ThemeMode.system,
+                                              icon: Icons.brightness_auto,
+                                              label: "システム",
+                                              isSelected: state.themeMode ==
+                                                  ThemeMode.system,
+                                              onTap: () => state.setThemeMode(
+                                                  ThemeMode.system),
+                                            ),
+                                            Container(
+                                                width: 1,
+                                                height: 32,
+                                                color:
+                                                    colorScheme.outlineVariant),
+                                            _buildThemeButton(
+                                              context,
+                                              mode: ThemeMode.light,
+                                              icon: Icons.light_mode,
+                                              label: "ライト",
+                                              isSelected: state.themeMode ==
+                                                  ThemeMode.light,
+                                              onTap: () => state.setThemeMode(
+                                                  ThemeMode.light),
+                                            ),
+                                            Container(
+                                                width: 1,
+                                                height: 32,
+                                                color:
+                                                    colorScheme.outlineVariant),
+                                            _buildThemeButton(
+                                              context,
+                                              mode: ThemeMode.dark,
+                                              icon: Icons.dark_mode,
+                                              label: "ダーク",
+                                              isSelected: state.themeMode ==
+                                                  ThemeMode.dark,
+                                              onTap: () => state
+                                                  .setThemeMode(ThemeMode.dark),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
                                   ),
-                                ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              SwitchListTile(
+                                title: const Text("ダイナミックカラー(beta)",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                subtitle: const Text("OSのアクセントカラーを使用"),
+                                value: state.useDynamicColor,
+                                onChanged: (v) => state.toggleDynamicColor(v),
+                                thumbIcon: _thumbIcon,
+                                secondary: const Icon(Icons.palette_outlined),
                               ),
-                            ),
-                            Divider(
-                              height: 4,
-                              color: colorScheme.surfaceContainerHigh,
-                            ),
-                            SwitchListTile(
-                              title: const Text("ダイナミックカラー(beta)",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              // subtitle: const Text("壁紙の色に合わせてテーマを変更"),
-                              subtitle: const Text("OSのアクセントカラーを使用"),
-                              value: state.useDynamicColor,
-                              onChanged: (v) => state.toggleDynamicColor(v),
-                              thumbIcon: _thumbIcon,
-                              secondary: const Icon(Icons.palette_outlined),
-                            ),
-                            AnimatedSize(
-                              duration: const Duration(milliseconds: 450),
-                              curve: Curves.easeInOut,
-                              alignment: Alignment.topCenter,
-                              child: state.useDynamicColor
-                                  ? Column(
-                                      children: [
-                                        const SizedBox(height: 4),
-                                        Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 16),
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: colorScheme.surfaceBright,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.info_outline,
-                                                  size: 18,
-                                                  color: colorScheme.primary),
-                                              const SizedBox(width: 12),
-                                              Flexible(
-                                                child: Text(
-                                                  "OSのアクセントカラーを変更した場合、\n反映するにはアプリの再起動が必要です。",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color:
-                                                          colorScheme.primary),
+                              AnimatedSize(
+                                duration: const Duration(milliseconds: 450),
+                                curve: Curves.easeInOut,
+                                alignment: Alignment.topCenter,
+                                child: state.useDynamicColor
+                                    ? Column(
+                                        children: [
+                                          const SizedBox(height: 4),
+                                          Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 16),
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: colorScheme.surfaceBright,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons.info_outline,
+                                                    size: 18,
+                                                    color: colorScheme.primary),
+                                                const SizedBox(width: 12),
+                                                Flexible(
+                                                  child: Text(
+                                                    "OSのアクセントカラーを変更した場合、\n反映するにはアプリの再起動が必要です。",
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: colorScheme
+                                                            .primary),
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                      ],
-                                    )
-                                  : const SizedBox.shrink(),
-                            ),
-                          ],
-                        ),
+                                          const SizedBox(height: 8),
+                                        ],
+                                      )
+                                    : const SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
 
                       const SizedBox(height: 24),
@@ -1275,81 +1294,84 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                 color: colorScheme.primary,
                                 fontWeight: FontWeight.bold)),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceBright,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                              color: colorScheme.outlineVariant
-                                  .withValues(alpha: 0.2)),
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
+                      ExpressiveSection(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Icon(Icons.timer_outlined),
-                                const SizedBox(width: 16),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Row(
                                   children: [
-                                    Text("発表時間",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: colorScheme.onSurface)),
-                                    Text("プレゼンの持ち時間",
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color:
-                                                colorScheme.onSurfaceVariant)),
+                                    const Icon(Icons.timer_outlined),
+                                    const SizedBox(width: 16),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text("発表時間",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: colorScheme.onSurface)),
+                                        Text("プレゼンの持ち時間",
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: colorScheme
+                                                    .onSurfaceVariant)),
+                                      ],
+                                    ),
                                   ],
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Row(
+                                      children: [
+                                        _TimeInputBox(
+                                          value: state.durationMin,
+                                          onChanged: (v) =>
+                                              state.updateDuration(
+                                                  v, state.durationSec),
+                                          label: "分",
+                                        ),
+                                        Column(
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 8),
+                                              child: Text(":",
+                                                  style: TextStyle(
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: colorScheme
+                                                          .onSurface)),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text("",
+                                                style: const TextStyle(
+                                                    fontSize: 12)),
+                                          ],
+                                        ),
+                                        _TimeInputBox(
+                                          value: state.durationSec,
+                                          onChanged: (v) =>
+                                              state.updateDuration(
+                                                  state.durationMin, v),
+                                          label: "秒",
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
-                            const SizedBox(width: 8), // Add spacing
-                            Flexible(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Row(
-                                  children: [
-                                    _TimeInputBox(
-                                      value: state.durationMin,
-                                      onChanged: (v) => state.updateDuration(
-                                          v, state.durationSec),
-                                      label: "分",
-                                    ),
-                                    Column(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 8),
-                                          child: Text(":",
-                                              style: TextStyle(
-                                                  fontSize: 24,
-                                                  fontWeight: FontWeight.bold,
-                                                  color:
-                                                      colorScheme.onSurface)),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text("",
-                                            style:
-                                                const TextStyle(fontSize: 12)),
-                                      ],
-                                    ),
-                                    _TimeInputBox(
-                                      value: state.durationSec,
-                                      onChanged: (v) => state.updateDuration(
-                                          state.durationMin, v),
-                                      label: "秒",
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
 
                       const SizedBox(height: 16),
@@ -1384,57 +1406,43 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                 color: colorScheme.primary,
                                 fontWeight: FontWeight.bold)),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceBright,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                              color: colorScheme.outlineVariant
-                                  .withValues(alpha: 0.2)),
-                        ),
-                        child: Column(
-                          children: [
-                            ListTile(
-                              leading: Icon(Icons.palette_outlined,
-                                  color: colorScheme.primary),
-                              title: Text("カラーパレット一覧",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: colorScheme.onSurface)),
-                              subtitle: Text("(デバッグ用)カラーパレットを表示",
-                                  style:
-                                      TextStyle(color: colorScheme.onSurface)),
-                              trailing: Icon(Icons.arrow_forward_ios,
-                                  size: 16,
-                                  color: colorScheme.onSurfaceVariant),
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ColorSchemePreviewScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                            Divider(
-                                height: 1,
-                                color: colorScheme.surfaceContainerHigh),
-                            ListTile(
-                              leading: Icon(Icons.info_outline,
-                                  color: colorScheme.primary),
-                              title: Text("プレゼンタイマー Prime (仮)",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: colorScheme.onSurface)),
-                              subtitle: _packageInfo != null
-                                  ? Text(
-                                      "バージョン ${_packageInfo!.version} (ビルド ${_packageInfo!.buildNumber})",
-                                      style: TextStyle(
-                                          color: colorScheme.onSurfaceVariant))
-                                  : null,
-                            ),
-                          ],
-                        ),
+                      ExpressiveSection(
+                        children: [
+                          ListTile(
+                            leading: Icon(Icons.palette_outlined,
+                                color: colorScheme.primary),
+                            title: Text("カラーパレット一覧",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface)),
+                            subtitle: Text("(デバッグ用)カラーパレットを表示",
+                                style: TextStyle(color: colorScheme.onSurface)),
+                            trailing: Icon(Icons.arrow_forward_ios,
+                                size: 16, color: colorScheme.onSurfaceVariant),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ColorSchemePreviewScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.info_outline,
+                                color: colorScheme.primary),
+                            title: Text("プレゼンタイマー Prime (仮)",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface)),
+                            subtitle: _packageInfo != null
+                                ? Text(
+                                    "バージョン ${_packageInfo!.version} (ビルド ${_packageInfo!.buildNumber})",
+                                    style: TextStyle(
+                                        color: colorScheme.onSurfaceVariant))
+                                : null,
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -1947,33 +1955,25 @@ class ColorSchemePreviewScreen extends StatelessWidget {
               style: TextStyle(
                   color: colorScheme.primary, fontWeight: FontWeight.bold)),
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceBright,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
-          ),
-          child: Column(
-            children: [
-              SwitchListTile(
-                title: Text("ダイナミックカラー(beta)",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface)),
-                subtitle: Text(
-                    "OSのテーマカラーに合わせてアプリのカラーパレットを変更します\nOSのテーマカラーを変更した場合は、アプリを再起動すると適用されます。",
-                    style: TextStyle(color: colorScheme.onSurfaceVariant)),
-                value: state.useDynamicColor,
-                onChanged: (value) {
-                  state.toggleDynamicColor(value);
-                },
-                secondary: Icon(Icons.palette_outlined,
-                    color: colorScheme.onSurfaceVariant),
-                thumbIcon: thumbIcon,
-              ),
-            ],
-          ),
+        ExpressiveSection(
+          children: [
+            SwitchListTile(
+              title: Text("ダイナミックカラー(beta)",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface)),
+              subtitle: Text(
+                  "OSのテーマカラーに合わせてアプリのカラーパレットを変更します\nOSのテーマカラーを変更した場合は、アプリを再起動すると適用されます。",
+                  style: TextStyle(color: colorScheme.onSurfaceVariant)),
+              value: state.useDynamicColor,
+              onChanged: (value) {
+                state.toggleDynamicColor(value);
+              },
+              secondary: Icon(Icons.palette_outlined,
+                  color: colorScheme.onSurfaceVariant),
+              thumbIcon: thumbIcon,
+            ),
+          ],
         ),
       ],
     );
@@ -1991,22 +1991,8 @@ class ColorSchemePreviewScreen extends StatelessWidget {
               style: TextStyle(
                   color: colorScheme.primary, fontWeight: FontWeight.bold)),
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceBright,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
-          ),
-          child: Column(
-            children: [
-              for (int i = 0; i < colors.length; i++) ...[
-                if (i > 0)
-                  Divider(height: 1, color: colorScheme.surfaceContainerHigh),
-                _buildColorRow(context, colors[i]),
-              ],
-            ],
-          ),
+        ExpressiveSection(
+          children: colors.map((c) => _buildColorRow(context, c)).toList(),
         ),
       ],
     );
