@@ -166,7 +166,7 @@ class ColorSchemePreviewScreen extends StatelessWidget {
         ExpressiveSection(
           children: [
             SwitchListTile(
-              title: Text("ダイナミックカラー(beta)",
+              title: Text("ダイナミックカラー",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: colorScheme.onSurface)),

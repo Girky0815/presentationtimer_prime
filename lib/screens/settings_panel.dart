@@ -230,7 +230,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                           Column(
                             children: [
                               SwitchListTile(
-                                title: const Text("ダイナミックカラー(beta)",
+                                title: const Text("ダイナミックカラー",
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 subtitle: const Text("OSのアクセントカラーを使用"),
