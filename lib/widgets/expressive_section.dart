@@ -13,7 +13,7 @@ class ExpressiveSection extends StatelessWidget {
     return Column(
       children: [
         for (int i = 0; i < count; i++) ...[
-          if (i > 0) const SizedBox(height: 2),
+          if (i > 0) const SizedBox(height: 0.1),
           Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
