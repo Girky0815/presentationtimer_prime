@@ -6,6 +6,12 @@ import '../widgets/expressive_section.dart';
 import '../widgets/time_input_box.dart';
 import 'color_scheme_preview_screen.dart';
 
+/// 設定画面パネル。
+///
+/// 以下の設定項目を提供します。
+/// - 外観設定（テーマ切り替え、ダイナミックカラー）
+/// - タイマー設定（デフォルトの発表時間）
+/// - アプリ情報（バージョン、ライセンス、カラーパレット確認）
 class SettingsPanel extends StatefulWidget {
   const SettingsPanel({super.key});
 
@@ -91,7 +97,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
             constraints: const BoxConstraints(maxWidth: 800),
             child: Column(
               children: [
-                // Custom Header
+                // カスタムヘッダー（戻るボタンとタイトル）
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -120,7 +126,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 48),
                     children: [
-                      // Appearance
+                      // 「外観」セクション
                       Padding(
                         padding: const EdgeInsets.only(left: 16, bottom: 8),
                         child: Text("外観",
@@ -282,7 +288,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
 
                       const SizedBox(height: 24),
 
-                      // Timer Duration
+                      // 「タイマー設定」セクション
                       Padding(
                         padding: const EdgeInsets.only(left: 16, bottom: 8),
                         child: Text("タイマー設定",
@@ -348,7 +354,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                                           .onSurface)),
                                             ),
                                             const SizedBox(height: 4),
-                                            Text("",
+                                            const Text("",
                                                 style: const TextStyle(
                                                     fontSize: 12)),
                                           ],
@@ -383,7 +389,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                             const SizedBox(width: 8),
                             Flexible(
                               child: Text(
-                                "メイン画面のベルカードを押すと\nベルの設定を変更できます。",
+                                "メイン画面のベルカードを押すと、ベルの設定を変更できます。",
                                 style: TextStyle(
                                     color: colorScheme.onSurfaceVariant),
                               ),
@@ -394,7 +400,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
 
                       const SizedBox(height: 24),
 
-                      // About Section
+                      // 「概要」セクション
                       Padding(
                         padding: const EdgeInsets.only(left: 16, bottom: 8),
                         child: Text("概要",
@@ -411,7 +417,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: colorScheme.onSurface)),
-                            subtitle: Text("(デバッグ用)カラーパレットを表示",
+                            subtitle: Text("(デバッグ用･おまけ)カラーパレットを表示",
                                 style: TextStyle(color: colorScheme.onSurface)),
                             trailing: Icon(Icons.arrow_forward_ios,
                                 size: 16, color: colorScheme.onSurfaceVariant),

@@ -4,6 +4,10 @@ import 'package:provider/provider.dart';
 import '../state/timer_state.dart';
 import '../widgets/expressive_section.dart';
 
+/// カラーパレット確認用画面（デバッグ用・おまけ）。
+///
+/// 現在のテーマ（ライト/ダーク）およびダイナミックカラー設定に基づいた
+/// マテリアルデザインの各カラーロール（Primary, Secondary, Surfaceなど）を一覧表示します。
 class ColorSchemePreviewScreen extends StatelessWidget {
   const ColorSchemePreviewScreen({super.key});
 
@@ -89,7 +93,7 @@ class ColorSchemePreviewScreen extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 800),
             child: Column(
               children: [
-                // Custom Header
+                // カスタムヘッダー
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

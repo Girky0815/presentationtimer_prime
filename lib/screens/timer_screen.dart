@@ -8,6 +8,14 @@ import '../widgets/bell_chip.dart';
 import '../widgets/bell_edit_dialog.dart';
 import 'settings_panel.dart';
 
+/// メインのタイマー画面。
+///
+/// 以下の機能を提供します。
+/// - 現在のモード（タイマー/ストップウォッチ）の切り替え
+/// - ベル（時間経過通知）のリスト表示と追加
+/// - 大きなタイマー時間の表示 (タップでモード切り替え)
+/// - タイマーの開始/一時停止/リセット操作
+/// - 設定画面への遷移
 class TimerScreen extends StatelessWidget {
   const TimerScreen({super.key});
 
@@ -25,7 +33,7 @@ class TimerScreen extends StatelessWidget {
         children: [
           Column(
             children: [
-              // Header (SafeArea top only)
+              // ヘッダー: モード切り替えスイッチ
               SafeArea(
                 bottom: false,
                 child: Padding(
@@ -47,7 +55,7 @@ class TimerScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Bells List
+                    // ベル（通知タイミング）のリスト表示
                     SizedBox(
                       height: 100,
                       child: Center(
@@ -60,7 +68,7 @@ class TimerScreen extends StatelessWidget {
                               ...state.sortedBells.map((bell) {
                                 return BellChip(bell: bell);
                               }),
-                              // Add Button
+                              // ベル追加ボタン
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: InkWell(
@@ -97,7 +105,7 @@ class TimerScreen extends StatelessWidget {
                       ),
                     ),
 
-                    // Huge Timer Display (Expanded to take max space)
+                    // タイマー時間表示（タップでモード切り替え）
                     Expanded(
                       child: Center(
                         child: GestureDetector(
@@ -137,7 +145,7 @@ class TimerScreen extends StatelessWidget {
                       ),
                     ),
 
-                    // Status Text
+                    // 状態テキスト（残り時間/経過時間など）
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Text(
@@ -158,7 +166,7 @@ class TimerScreen extends StatelessWidget {
                 ),
               ),
 
-              // Bottom Controls Area (Fixed at bottom)
+              // 下部コントロールエリア（リセット、スタート/ストップ）
               Container(
                 color: colorScheme.surfaceContainer, // Match background
                 child: SafeArea(
@@ -168,6 +176,7 @@ class TimerScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // リセットボタン
                         IconButton.filledTonal(
                           onPressed: state.reset,
                           icon: const Icon(Icons.restart_alt),
@@ -179,6 +188,7 @@ class TimerScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 24),
+                        // スタート/ストップボタン
                         IconButton.filled(
                           onPressed: state.startStop,
                           icon: Icon(state.isRunning
@@ -207,7 +217,7 @@ class TimerScreen extends StatelessWidget {
             ],
           ),
 
-          // Settings Button (Absolute)
+          // 設定ボタン（画面右上に配置）
           Positioned(
             top: 0,
             right: 0,
