@@ -12,6 +12,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'services/preferences_service.dart';
+import 'models/bell_config.dart';
+import 'theme/color_schemes.dart';
+import 'utils/time_formatter.dart';
 
 void main() {
   runApp(
@@ -20,114 +23,6 @@ void main() {
       child: const PresentationTimerApp(),
     ),
   );
-}
-
-// --- Custom Color Schemes (User Defined) ---
-const lightColorScheme = ColorScheme(
-  brightness: Brightness.light,
-  primary: Color(0xFF286A56),
-  onPrimary: Color(0xFFE4FFF2),
-  primaryContainer: Color(0xFFAEF0D7),
-  onPrimaryContainer: Color(0xFF175C49),
-  inversePrimary: Color(0xFFB9FCE2),
-  secondary: Color(0xFF4C645A),
-  onSecondary: Color(0xFFE4FFF2),
-  secondaryContainer: Color(0xFFCEE9DC),
-  onSecondaryContainer: Color(0xFF3F574D),
-  tertiary: Color(0xFF2E6771),
-  onTertiary: Color(0xFFEDFBFF),
-  tertiaryContainer: Color(0xFFB7EFFB),
-  onTertiaryContainer: Color(0xFF215B65),
-  error: Color(0xFFA83836),
-  onError: Color(0xFFFFF7F6),
-  errorContainer: Color(0xFFFA746F),
-  onErrorContainer: Color(0xFF6E0A12),
-  background: Color(0xFFF6FAF6),
-  onBackground: Color(0xFF2B3530),
-  surface: Color(0xFFF6FAF6),
-  onSurface: Color(0xFF2B3530),
-  surfaceVariant: Color(0xFFDAE5DF),
-  onSurfaceVariant: Color(0xFF57615C),
-  inverseSurface: Color(0xFF0B0F0D),
-  onInverseSurface: Color(0xFF999E9B),
-  surfaceContainerLowest: Color(0xFFFFFFFF),
-  surfaceContainerLow: Color(0xFFEFF5F0),
-  surfaceContainer: Color(0xFFE8F0EA),
-  surfaceContainerHigh: Color(0xFFE1EAE4),
-  surfaceContainerHighest: Color(0xFFDAE5DF),
-  surfaceDim: Color(0xFFD2DDD6),
-  surfaceBright: Color(0xFFF6FAF6),
-  outline: Color(0xFF737D78),
-  outlineVariant: Color(0xFFAAB4AE),
-  scrim: Color(0xFF000000),
-);
-
-const darkColorScheme = ColorScheme(
-  brightness: Brightness.dark,
-  primary: Color(0xFF9FD1BD),
-  onPrimary: Color(0xFF174839),
-  primaryContainer: Color(0xFF2C5B4B),
-  onPrimaryContainer: Color(0xFFBCEED9),
-  inversePrimary: Color(0xFF396858),
-  secondary: Color(0xFFB2CCC0),
-  onSecondary: Color(0xFF2E453C),
-  secondaryContainer: Color(0xFF294037),
-  onSecondaryContainer: Color(0xFFABC5B9),
-  tertiary: Color(0xFFDDF9FF),
-  onTertiary: Color(0xFF2B636E),
-  tertiaryContainer: Color(0xFFB7EFFB),
-  onTertiaryContainer: Color(0xFF205B65),
-  error: Color(0xFFFA746F),
-  onError: Color(0xFF490006),
-  errorContainer: Color(0xFF871F21),
-  onErrorContainer: Color(0xFFFF9993),
-  background: Color(0xFF0B0F0D),
-  onBackground: Color(0xFFDDE8E1),
-  surface: Color(0xFF0B0F0D),
-  onSurface: Color(0xFFDDE8E1),
-  surfaceVariant: Color(0xFF1E2824),
-  onSurfaceVariant: Color(0xFFA3AEA8),
-  inverseSurface: Color(0xFFF6FAF6),
-  onInverseSurface: Color(0xFF515653),
-  surfaceContainerLowest: Color(0xFF000000),
-  surfaceContainerLow: Color(0xFF0E1512),
-  surfaceContainer: Color(0xFF141B18),
-  surfaceContainerHigh: Color(0xFF19211E),
-  surfaceContainerHighest: Color(0xFF1E2824),
-  surfaceDim: Color(0xFF0B0F0D),
-  surfaceBright: Color(0xFF242E2A),
-  outline: Color(0xFF6D7872),
-  outlineVariant: Color(0xFF404A45),
-  scrim: Color(0xFF000000),
-);
-
-// --- Models ---
-class BellConfig {
-  final int id;
-  int min;
-  int sec;
-  int count;
-
-  BellConfig(
-      {required this.id, required this.min, required this.sec, this.count = 1});
-
-  int get totalSeconds => min * 60 + sec;
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'min': min,
-        'sec': sec,
-        'count': count,
-      };
-
-  factory BellConfig.fromJson(Map<String, dynamic> json) {
-    return BellConfig(
-      id: json['id'],
-      min: json['min'],
-      sec: json['sec'],
-      count: json['count'] ?? 1,
-    );
-  }
 }
 
 // --- State Management ---
@@ -571,7 +466,7 @@ class TimerScreen extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 16.0),
                                 child: Text(
-                                  _formatTime(state.displayTime),
+                                  formatTime(state.displayTime),
                                   style: TextStyle(
                                     fontFamily: 'Google Sans Flex',
                                     fontSize: timerFontSize,
@@ -954,7 +849,7 @@ class _BellChip extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                _formatTime(bellTime).replaceAll('-', ''),
+                formatTime(bellTime).replaceAll('-', ''),
                 style: TextStyle(
                   fontFamily: 'Google Sans Flex',
                   fontSize: 22,
@@ -1789,15 +1684,6 @@ class _TimeInputBoxState extends State<_TimeInputBox> {
       ],
     );
   }
-}
-
-// Helper
-String _formatTime(int totalSeconds) {
-  final absSeconds = totalSeconds.abs();
-  final m = (absSeconds ~/ 60).toString().padLeft(2, '0');
-  final s = (absSeconds % 60).toString().padLeft(2, '0');
-  final sign = totalSeconds < 0 ? '-' : '';
-  return "$sign$m:$s";
 }
 
 class ColorSchemePreviewScreen extends StatelessWidget {

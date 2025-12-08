@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../main.dart'; // Import for BellConfig and ThemeMode
+import '../models/bell_config.dart';
 
 class PreferencesService {
   static const String _keyThemeMode = 'theme_mode';
